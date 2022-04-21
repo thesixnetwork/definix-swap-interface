@@ -7,6 +7,10 @@ export default {
     1001: process.env.REACT_APP_HERODOTUS_TESTNET,
     8217: process.env.REACT_APP_HERODOTUS_MAINNET
   },
+  favor: {
+    1001: process.env.REACT_APP_FAVOR_ADDRESS_TESTNET,
+    8217: process.env.REACT_APP_FAVOR_ADDRESS_MAINNET
+  },
   vfinix:{
     1001: process.env.REACT_APP_VFINIX_ADDRESS_TESTNET,
     8217: process.env.REACT_APP_VFINIX_ADDRESS_MAINNET
