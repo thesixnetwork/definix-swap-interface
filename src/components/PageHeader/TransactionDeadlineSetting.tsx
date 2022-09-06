@@ -1,33 +1,8 @@
+import { HelpOutlineRounded } from '@mui/icons-material'
+import ErrorRoundedIcon from '@mui/icons-material/ErrorRounded'
+import { Box, InputAdornment, OutlinedInput, Tooltip, Typography } from '@mui/material'
 import React, { useEffect, useState } from 'react'
-import styled from 'styled-components'
-import { Input, Text } from 'uikit-dev'
 import { useUserDeadline } from 'state/user/hooks'
-import QuestionHelper from '../QuestionHelper'
-import TranslatedText from '../TranslatedText'
-
-const StyledTransactionDeadlineSetting = styled.div`
-  margin-bottom: 16px;
-`
-
-const Label = styled.div`
-  align-items: center;
-  display: flex;
-  margin-bottom: 8px;
-`
-
-const Field = styled.div`
-  align-items: center;
-  display: inline-flex;
-
-  & > ${Input} {
-    max-width: 100px;
-  }
-
-  & > ${Text} {
-    font-size: 14px;
-    margin-left: 8px;
-  }
-`
 
 const TransactionDeadlineSetting = () => {
   const [deadline, setDeadline] = useUserDeadline()
@@ -55,23 +30,38 @@ const TransactionDeadlineSetting = () => {
   }, [value, setError, setDeadline])
 
   return (
-    <StyledTransactionDeadlineSetting>
-      <Label>
-        <Text small style={{ fontWeight: 600 }}>
-          <TranslatedText translationId={90}>Transaction deadline</TranslatedText>
-        </Text>
-        <QuestionHelper text="Your transaction will revert if it is pending for more than this long." />
-      </Label>
-      <Field>
-        <Input type="number" scale="lg" step="1" min="1" value={value} onChange={handleChange} />
-        <Text>Minutes</Text>
-      </Field>
+    <Box>
+      <Typography color="text.secondary" fontWeight={500} sx={{ display: 'flex', alignItems: 'center' }} mb={2}>
+        Transaction Deadline
+        <Tooltip title="Your transaction will revert if it is pending for more than this long.">
+          <HelpOutlineRounded className="ml-1" sx={{ width: '16px', height: '16px' }} />
+        </Tooltip>
+      </Typography>
+
+      <OutlinedInput
+        type="number"
+        inputProps={{ step: 1, min: 1 }}
+        size="small"
+        placeholder="5%"
+        value={value}
+        onChange={handleChange}
+        endAdornment={
+          <InputAdornment position="end">
+            <Typography fontWeight={500} color="text.secondary">
+              Minutes
+            </Typography>
+          </InputAdornment>
+        }
+        sx={{ width: '184px' }}
+      />
+
       {error && (
-        <Text small mt="8px" color="failure">
+        <Typography variant="body2" color="error" mt="8px" sx={{ display: 'flex', alignItems: 'center', mt: '12px' }}>
+          <ErrorRoundedIcon sx={{ fontSize: '1rem', mr: 0.5 }} />
           {error}
-        </Text>
+        </Typography>
       )}
-    </StyledTransactionDeadlineSetting>
+    </Box>
   )
 }
 

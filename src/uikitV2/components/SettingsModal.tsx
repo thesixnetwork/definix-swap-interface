@@ -9,7 +9,17 @@ type SettingsModalProps = {
 
 const SettingsModal = ({ onDismiss }: SettingsModalProps) => {
   return (
-    <ModalV2 title="Settings" onDismiss={onDismiss}>
+    <ModalV2
+      title="Settings"
+      onDismiss={onDismiss}
+      sx={{
+        maxWidth: {
+          sm: '490px',
+        },
+        height: 'auto',
+        borderRadius: '24px',
+      }}
+    >
       <SlippageToleranceSettings />
       <TransactionDeadlineSetting />
     </ModalV2>
