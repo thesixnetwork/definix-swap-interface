@@ -1,11 +1,13 @@
-import React from 'react'
+import { ThemeProvider as MuiThemeProvider } from '@mui/material/styles'
 import { createWeb3ReactRoot, Web3ReactProvider } from '@web3-react/core'
+import React from 'react'
 import { Provider } from 'react-redux'
 import { ModalProvider } from 'uikit-dev'
+import muiTheme from 'uikitV2/muiTheme'
 import { NetworkContextName } from './constants'
 import store from './state'
-import getLibrary from './utils/getLibrary'
 import { ThemeContextProvider } from './ThemeContext'
+import getLibrary from './utils/getLibrary'
 
 const Web3ProviderNetwork = createWeb3ReactRoot(NetworkContextName)
 
@@ -15,7 +17,9 @@ const Providers: React.FC = ({ children }) => {
       <Web3ProviderNetwork getLibrary={getLibrary}>
         <Provider store={store}>
           <ThemeContextProvider>
-            <ModalProvider>{children}</ModalProvider>
+            <MuiThemeProvider theme={muiTheme}>
+              <ModalProvider>{children}</ModalProvider>
+            </MuiThemeProvider>
           </ThemeContextProvider>
         </Provider>
       </Web3ProviderNetwork>
