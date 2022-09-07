@@ -1,21 +1,21 @@
+import { Typography } from '@mui/material'
 import { Currency, CurrencyAmount, currencyEquals, ETHER, Token } from 'definixswap-sdk'
 import React, { CSSProperties, MutableRefObject, useCallback, useMemo } from 'react'
 import { FixedSizeList } from 'react-window'
 import styled from 'styled-components'
 import { Text } from 'uikit-dev'
 import { useActiveWeb3React } from '../../hooks'
+import { useIsUserAddedToken } from '../../hooks/Tokens'
 import { useSelectedTokenList, WrappedTokenInfo } from '../../state/lists/hooks'
 import { useAddUserToken, useRemoveUserAddedToken } from '../../state/user/hooks'
 import { useCurrencyBalance } from '../../state/wallet/hooks'
-import { LinkStyledButton } from '../Shared'
-import { useIsUserAddedToken } from '../../hooks/Tokens'
-import Column from '../Column'
-import { RowFixed } from '../Row'
-import CurrencyLogo from '../CurrencyLogo'
-import { MouseoverTooltip } from '../Tooltip'
-import { FadedSpan, MenuItem } from './styleds'
-import Loader from '../Loader'
 import { isTokenOnList } from '../../utils'
+import Column from '../Column'
+import CurrencyLogo from '../CurrencyLogo'
+import Loader from '../Loader'
+import { RowFixed } from '../Row'
+import { MouseoverTooltip } from '../Tooltip'
+import { MenuItem } from './styleds'
 
 function currencyKey(currency: Currency): string {
   return currency instanceof Token ? currency.address : currency === ETHER ? 'ETHER' : ''
@@ -112,39 +112,47 @@ function CurrencyRow({
       disabled={isSelected}
       selected={otherSelected}
     >
-      <CurrencyLogo currency={currency} size="24px" />
+      <CurrencyLogo currency={currency} size="32px" />
+
       <Column>
-        <Text title={currency.name}>{currency.symbol}</Text>
-        <FadedSpan>
-          {!isOnSelectedList && customAdded && !(currency instanceof WrappedTokenInfo) ? (
-            <Text>
-              Added by user
-              <LinkStyledButton
-                onClick={(event) => {
-                  event.stopPropagation()
-                  if (chainId && currency instanceof Token) removeToken(chainId, currency.address)
-                }}
-              >
-                (Remove)
-              </LinkStyledButton>
-            </Text>
-          ) : null}
-          {!isOnSelectedList && !customAdded && !(currency instanceof WrappedTokenInfo) ? (
-            <Text>
-              Found by address
-              <LinkStyledButton
-                onClick={(event) => {
-                  event.stopPropagation()
-                  if (currency instanceof Token) addToken(currency)
-                }}
-              >
-                (Add)
-              </LinkStyledButton>
-            </Text>
-          ) : null}
-        </FadedSpan>
+        <Typography title={currency.name}>{currency.symbol}</Typography>
+
+        {!isOnSelectedList && customAdded && !(currency instanceof WrappedTokenInfo) ? (
+          <Typography variant="caption" color="text.disabled" component="p">
+            Added by user
+            <Typography
+              variant="caption"
+              color="primary"
+              ml={0.5}
+              onClick={(event) => {
+                event.stopPropagation()
+                if (chainId && currency instanceof Token) removeToken(chainId, currency.address)
+              }}
+            >
+              (Remove)
+            </Typography>
+          </Typography>
+        ) : null}
+        {!isOnSelectedList && !customAdded && !(currency instanceof WrappedTokenInfo) ? (
+          <Typography variant="caption" color="text.disabled" component="p">
+            Found by address
+            <Typography
+              variant="caption"
+              color="primary"
+              ml={0.5}
+              onClick={(event) => {
+                event.stopPropagation()
+                if (currency instanceof Token) addToken(currency)
+              }}
+            >
+              (Add)
+            </Typography>
+          </Typography>
+        ) : null}
       </Column>
+
       <TokenTags currency={currency} />
+
       <RowFixed style={{ justifySelf: 'flex-end' }}>
         {balance ? <Balance balance={balance} /> : account ? <Loader /> : null}
       </RowFixed>
@@ -199,7 +207,7 @@ export default function CurrencyList({
       width="100%"
       itemData={itemData}
       itemCount={itemData.length}
-      itemSize={56}
+      itemSize={60}
       itemKey={itemKey}
     >
       {Row}

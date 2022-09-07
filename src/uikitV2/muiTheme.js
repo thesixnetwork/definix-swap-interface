@@ -117,6 +117,7 @@ let muiTheme = createTheme({
         },
       },
     },
+
     MuiListItemIcon: {
       styleOverrides: {
         root: { minWidth: '24px', marginRight: '8px', color: 'inherit' },

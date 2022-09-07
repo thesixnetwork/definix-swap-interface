@@ -29,7 +29,7 @@ const PageTitle = ({
   linkLabel = '',
   img = '',
   children = undefined,
-  sx = undefined,
+  sx = {},
 }) => {
   const theme = useTheme()
   const mdUp = useMediaQuery(theme.breakpoints.up('md'))
@@ -47,7 +47,7 @@ const PageTitle = ({
       </Typography>
 
       {caption && (
-        <Typography variant="body1" fontSize="1.125rem" color="#999999" sx={{ mt: '12px' }}>
+        <Typography variant="body1" fontSize="1.125rem" color="#999999" sx={{ mt: '12px', fontWeight: 'normal' }}>
           {caption}
         </Typography>
       )}

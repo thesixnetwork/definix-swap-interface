@@ -1,10 +1,11 @@
-import React from 'react'
+import { Button } from '@mui/material'
 import { useWeb3React } from '@web3-react/core'
-import { Button, ButtonProps, ConnectorId, useWalletModal } from 'uikit-dev'
 import { injected, walletconnect } from 'connectors'
 import useI18n from 'hooks/useI18n'
+import React from 'react'
+import { ConnectorId, useWalletModal } from 'uikit-dev'
 
-const UnlockButton: React.FC<ButtonProps> = props => {
+const UnlockButton = (props) => {
   const TranslateString = useI18n()
   const { account, activate, deactivate } = useWeb3React()
 
@@ -18,8 +19,8 @@ const UnlockButton: React.FC<ButtonProps> = props => {
   const { onPresentConnectModal } = useWalletModal(handleLogin, deactivate, account as string)
 
   return (
-    <Button onClick={onPresentConnectModal} {...props}>
-      {TranslateString(292, 'Unlock Wallet')}
+    <Button variant="contained" size="large" onClick={onPresentConnectModal} {...props}>
+      {TranslateString(292, 'Connect Wallet')}
     </Button>
   )
 }

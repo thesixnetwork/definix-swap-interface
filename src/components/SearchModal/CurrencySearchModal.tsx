@@ -1,14 +1,12 @@
 import { Currency } from 'definixswap-sdk'
-import React, { useCallback, useEffect, useState } from 'react'
-import useLast from '../../hooks/useLast'
-import { useSelectedListUrl } from '../../state/lists/hooks'
-import Modal from '../Modal'
+import React, { useCallback, useState } from 'react'
+import ModalV2 from 'uikitV2/components/ModalV2'
 import { CurrencySearch } from './CurrencySearch'
 import { ListSelect } from './ListSelect'
 
 interface CurrencySearchModalProps {
-  isOpen: boolean
-  onDismiss: () => void
+  isOpen?: boolean
+  onDismiss?: () => void
   selectedCurrency?: Currency | null
   onCurrencySelect: (currency: Currency) => void
   otherSelectedCurrency?: Currency | null
@@ -17,20 +15,13 @@ interface CurrencySearchModalProps {
 }
 
 export default function CurrencySearchModal({
-  isOpen,
-  onDismiss,
+  isOpen = false,
+  onDismiss = () => null,
   onCurrencySelect,
   selectedCurrency,
   otherSelectedCurrency,
 }: CurrencySearchModalProps) {
   const [listView, setListView] = useState<boolean>(false)
-  const lastOpen = useLast(isOpen)
-
-  useEffect(() => {
-    if (isOpen && !lastOpen) {
-      setListView(false)
-    }
-  }, [isOpen, lastOpen])
 
   const handleCurrencySelect = useCallback(
     (currency: Currency) => {
@@ -47,23 +38,14 @@ export default function CurrencySearchModal({
     setListView(false)
   }, [])
 
-  const selectedListUrl = useSelectedListUrl()
-  const noListSelected = !selectedListUrl
-
   return (
-    <Modal isOpen={isOpen} onDismiss={onDismiss} maxHeight={90} minHeight={listView ? 40 : noListSelected ? 0 : 80}>
+    <ModalV2
+      title="Select a token"
+      onDismiss={onDismiss}
+      sx={{ width: '100%', maxWidth: { md: '416px' }, height: '100vh !important', margin: '0 !important' }}
+    >
       {listView ? (
         <ListSelect onDismiss={onDismiss} onBack={handleClickBack} />
-      ) : noListSelected ? (
-        <CurrencySearch
-          isOpen={isOpen}
-          onDismiss={onDismiss}
-          onCurrencySelect={handleCurrencySelect}
-          onChangeList={handleClickChangeList}
-          selectedCurrency={selectedCurrency}
-          otherSelectedCurrency={otherSelectedCurrency}
-          showCommonBases={false}
-        />
       ) : (
         <CurrencySearch
           isOpen={isOpen}
@@ -75,6 +57,6 @@ export default function CurrencySearchModal({
           showCommonBases={false}
         />
       )}
-    </Modal>
+    </ModalV2>
   )
 }
