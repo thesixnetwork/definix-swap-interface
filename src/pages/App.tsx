@@ -11,6 +11,7 @@ import { LanguageContext } from '../hooks/LanguageContext'
 import { TranslationsContext } from '../hooks/TranslationsContext'
 import AddLiquidity from './AddLiquidity'
 import { RedirectDuplicateTokenIds, RedirectOldAddLiquidityPathStructure } from './AddLiquidity/redirects'
+import LiquidityList from './LiquidityList'
 import Pool from './Pool'
 import PoolFinder from './PoolFinder'
 import RemoveLiquidity from './RemoveLiquidity'
@@ -98,6 +99,7 @@ export default function App() {
                   <Route exact strict path="/find" component={PoolFinder} />
                   <Route exact strict path="/liquidity" component={Pool} />
                   <Route exact path="/add" component={AddLiquidity} />
+                  <Route exact path="/list" component={LiquidityList} />
                   <Route exact strict path="/remove/:currencyIdA/:currencyIdB" component={RemoveLiquidity} />
 
                   {/* <Route path="/xxx">
