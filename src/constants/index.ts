@@ -1,6 +1,6 @@
 import { ChainId, JSBI, Percent, Token, WETH } from 'definixswap-sdk'
 
-export const ROUTER_ADDRESS = process.env.REACT_APP_ROUTER_ADDRESS
+export const ROUTER_ADDRESS = (parseInt(process.env.REACT_APP_CHAIN_ID || "57") === parseInt(String(ChainId.MAINNET) || "57") ? process.env.REACT_APP_ROUTER_ADDRESS_MAINNET : process.env.REACT_APP_ROUTER_ADDRESS_TESTNET) || ""
 
 // a list of tokens by chain
 type ChainTokenList = {
