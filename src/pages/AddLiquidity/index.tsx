@@ -444,7 +444,7 @@ export default function AddLiquidity({
               <CardBody p="40px !important">
                 <div>
                   <Box>
-                    <Box display="flex" alignItems="baseline" mb={2.5}>
+                    <Box display="flex" alignItems="baseline" mb={1}>
                       <Typography variant="body2" color="text.secondary">
                         Balance
                       </Typography>
@@ -515,7 +515,7 @@ export default function AddLiquidity({
                   </Flex>
 
                   <Box>
-                    <Box display="flex" alignItems="baseline" mb={2.5}>
+                    <Box display="flex" alignItems="baseline" mb={1}>
                       <Typography variant="body2" color="text.secondary">
                         Balance
                       </Typography>

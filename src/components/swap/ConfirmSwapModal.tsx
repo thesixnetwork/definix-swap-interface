@@ -1,7 +1,9 @@
+import { ModalBody } from '@fingerlabs/definixswap-uikit-v2'
+import { Divider } from '@mui/material'
 import { currencyEquals, Trade } from 'definixswap-sdk'
 import { useActiveWeb3React } from 'hooks'
 import React, { useCallback, useMemo } from 'react'
-import { Button } from 'uikit-dev'
+import { Box, Button, Modal, useMatchBreakpoints } from 'uikit-dev'
 import swap from 'uikit-dev/animation/swap.json'
 import TransactionConfirmationModal, {
   ConfirmationModalContent,
@@ -51,6 +53,8 @@ export default function ConfirmSwapModal({
   swapErrorMessage: string | undefined
   onDismiss: () => void
 }) {
+  const { isXl } = useMatchBreakpoints()
+  const isMobile = !isXl
   const { chainId } = useActiveWeb3React()
 
   const showAcceptChanges = useMemo(
@@ -102,7 +106,7 @@ export default function ConfirmSwapModal({
     () => (
       <TransactionSubmittedContent
         title="Swap Complete"
-        date={`${new Date().toDateString()}, ${new Date().toTimeString().split(" ")[0]}`}
+        date={`${new Date().toDateString()}, ${new Date().toTimeString().split(' ')[0]}`}
         chainId={chainId}
         hash={txHash}
         content={modalHeaderWithoutAction}
@@ -120,7 +124,7 @@ export default function ConfirmSwapModal({
     () => (
       <TransactionErrorContent
         title="Swap Failed"
-        date={`${new Date().toDateString()}, ${new Date().toTimeString().split(" ")[0]}`}
+        date={`${new Date().toDateString()}, ${new Date().toTimeString().split(' ')[0]}`}
         chainId={chainId}
         hash={txHash}
         content={modalHeaderWithoutAction}
@@ -132,6 +136,34 @@ export default function ConfirmSwapModal({
       />
     ),
     [chainId, modalHeaderWithoutAction, onDismiss, txHash]
+  )
+
+  return (
+    <Modal title="Confirm Swap" onDismiss={onDismiss}>
+      <ModalBody isBody>
+        <Box width={isMobile ? '100%' : '472px'} height={isMobile ? '100vh' : '100%'}>
+          {!txHash && trade && (
+            <>
+              <SwapModalHeader
+                trade={trade}
+                // allowedSlippage={allowedSlippage}
+                // recipient={recipient}
+                showAcceptChanges={showAcceptChanges}
+                onAcceptChanges={onAcceptChanges}
+              />
+              <Divider style={{ marginTop: 20, marginBottom: 24 }} />
+              <SwapModalFooter
+                onConfirm={onConfirm}
+                trade={trade}
+                disabledConfirm={showAcceptChanges}
+                swapErrorMessage={swapErrorMessage}
+                allowedSlippage={allowedSlippage}
+              />
+            </>
+          )}
+        </Box>
+      </ModalBody>
+    </Modal>
   )
 
   return (
