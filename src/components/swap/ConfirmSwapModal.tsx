@@ -62,82 +62,6 @@ export default function ConfirmSwapModal({
     [originalTrade, trade]
   )
 
-  const modalHeader = useCallback(() => {
-    return trade ? (
-      <SwapModalHeader
-        trade={trade}
-        allowedSlippage={allowedSlippage}
-        recipient={recipient}
-        showAcceptChanges={showAcceptChanges}
-        onAcceptChanges={onAcceptChanges}
-      />
-    ) : null
-  }, [allowedSlippage, onAcceptChanges, recipient, showAcceptChanges, trade])
-
-  const modalHeaderWithoutAction = useCallback(() => {
-    return trade ? <SwapModalHeader trade={trade} onlyCurrency /> : null
-  }, [trade])
-
-  const modalBottom = useCallback(() => {
-    return trade ? (
-      <SwapModalFooter
-        onConfirm={onConfirm}
-        trade={trade}
-        disabledConfirm={showAcceptChanges}
-        swapErrorMessage={swapErrorMessage}
-        allowedSlippage={allowedSlippage}
-      />
-    ) : null
-  }, [allowedSlippage, onConfirm, showAcceptChanges, swapErrorMessage, trade])
-
-  const confirmContent = useCallback(
-    () => (
-      <ConfirmationModalContent
-        mainTitle="Confirm Swap"
-        title=""
-        topContent={modalHeader}
-        bottomContent={modalBottom}
-      />
-    ),
-    [modalBottom, modalHeader]
-  )
-
-  const submittedContent = useCallback(
-    () => (
-      <TransactionSubmittedContent
-        title="Swap Complete"
-        date={`${new Date().toDateString()}, ${new Date().toTimeString().split(' ')[0]}`}
-        chainId={chainId}
-        hash={txHash}
-        content={modalHeaderWithoutAction}
-        button={
-          <Button onClick={onDismiss} radii="card" fullWidth>
-            Back to Swap
-          </Button>
-        }
-      />
-    ),
-    [chainId, modalHeaderWithoutAction, onDismiss, txHash]
-  )
-
-  const errorContent = useCallback(
-    () => (
-      <TransactionErrorContent
-        title="Swap Failed"
-        date={`${new Date().toDateString()}, ${new Date().toTimeString().split(' ')[0]}`}
-        chainId={chainId}
-        hash={txHash}
-        content={modalHeaderWithoutAction}
-        button={
-          <Button onClick={onDismiss} radii="card" fullWidth>
-            Back to Swap
-          </Button>
-        }
-      />
-    ),
-    [chainId, modalHeaderWithoutAction, onDismiss, txHash]
-  )
-
   return (
     <Modal title="Confirm Swap" onDismiss={onDismiss}>
       <ModalBody isBody>
@@ -146,8 +70,8 @@ export default function ConfirmSwapModal({
             <>
               <SwapModalHeader
                 trade={trade}
-                // allowedSlippage={allowedSlippage}
-                // recipient={recipient}
+                allowedSlippage={allowedSlippage}
+                recipient={recipient}
                 showAcceptChanges={showAcceptChanges}
                 onAcceptChanges={onAcceptChanges}
               />
@@ -164,19 +88,5 @@ export default function ConfirmSwapModal({
         </Box>
       </ModalBody>
     </Modal>
-  )
-
-  return (
-    <TransactionConfirmationModal
-      isOpen={isOpen}
-      isPending={attemptingTxn}
-      isSubmitted={!!txHash}
-      isError={!!swapErrorMessage}
-      confirmContent={confirmContent}
-      pendingIcon={swap}
-      submittedContent={submittedContent}
-      errorContent={errorContent}
-      onDismiss={onDismiss}
-    />
   )
 }

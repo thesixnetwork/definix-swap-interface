@@ -423,6 +423,7 @@ export default function Swap({
         </Noti>
       )
     }
+
     return null
   }, [priceImpactSeverity])
 
@@ -448,336 +449,209 @@ export default function Swap({
         sx={{ mb: 1 }}
       />
 
-      <TimerWrapper isPhrase2={!(currentTime < phrase2TimeStamp && isPhrase2 === false)} date={phrase2TimeStamp}>
-        <>
-          <Overlay
-            show={isShowRightPanel && isMobileOrTablet}
-            style={{ position: 'absolute', zIndex: 6 }}
-            onClick={() => {
-              setIsShowRightPanel(false)
-            }}
-          />
+      <Card>
+        <Box p={5} display="flex" flexDirection="column">
+          <Box>
+            <Box display="flex" alignItems="baseline" mb={1}>
+              <Typography variant="body2" color="text.secondary">
+                Balance
+              </Typography>
+              <Typography fontSize={14} ml={1} color="text.secondary" style={{ fontWeight: 'bold' }}>
+                {!!currencies[Field.INPUT] && selectedCurrencyBalanceInput
+                  ? selectedCurrencyBalanceInput?.toSignificant(6)
+                  : '-'}
+              </Typography>
+            </Box>
+            <Box display="flex" alignItems="center" justifyContent="space-between" mb={1}>
+              <NumericalInput value={formattedAmounts[Field.INPUT]} onUserInput={handleTypeInput} fontSize="1.75rem" />
+              <CurrencySelect currency={currencies[Field.INPUT]} onClick={onPresentSelectCurrencyInputModal} />
+            </Box>
 
-          <Card>
-            <Box p={5} display="flex" flexDirection="column">
-              <Box>
-                <Box display="flex" alignItems="baseline" mb={1}>
-                  <Typography variant="body2" color="text.secondary">
-                    Balance
-                  </Typography>
-                  <Typography fontSize={14} ml={1} color="text.secondary" style={{ fontWeight: 'bold' }}>
-                    {!!currencies[Field.INPUT] && selectedCurrencyBalanceInput
-                      ? selectedCurrencyBalanceInput?.toSignificant(6)
-                      : '-'}
-                  </Typography>
-                </Box>
-                <Box display="flex" alignItems="center" justifyContent="space-between" mb={1}>
-                  <NumericalInput
-                    value={formattedAmounts[Field.INPUT]}
-                    onUserInput={handleTypeInput}
-                    fontSize="1.75rem"
-                  />
-                  <CurrencySelect currency={currencies[Field.INPUT]} onClick={onPresentSelectCurrencyInputModal} />
-                </Box>
-
-                {account && (
-                  <Box display="flex">
-                    <Chip
-                      label="25%"
-                      size="small"
-                      variant="outlined"
-                      onClick={handleQuarterInput}
-                      sx={{ mr: '6px', background: 'transparent' }}
-                    />
-                    <Chip
-                      label="50%"
-                      size="small"
-                      variant="outlined"
-                      onClick={handleHalfInput}
-                      sx={{ mr: '6px', background: 'transparent' }}
-                    />
-                    <Chip
-                      label="MAX"
-                      size="small"
-                      variant="outlined"
-                      onClick={handleMaxInput}
-                      sx={{ mr: '6px', background: 'transparent' }}
-                    />
-                  </Box>
-                )}
+            {account && (
+              <Box display="flex">
+                <Chip
+                  label="25%"
+                  size="small"
+                  variant="outlined"
+                  onClick={handleQuarterInput}
+                  sx={{ mr: '6px', background: 'transparent' }}
+                />
+                <Chip
+                  label="50%"
+                  size="small"
+                  variant="outlined"
+                  onClick={handleHalfInput}
+                  sx={{ mr: '6px', background: 'transparent' }}
+                />
+                <Chip
+                  label="MAX"
+                  size="small"
+                  variant="outlined"
+                  onClick={handleMaxInput}
+                  sx={{ mr: '6px', background: 'transparent' }}
+                />
               </Box>
+            )}
+          </Box>
 
-              <Flex justifyContent="center">
-                <IconButton
-                  onClick={() => {
-                    setApprovalSubmitted(false)
-                    onSwitchTokens()
-                  }}
-                >
-                  <ChangeIcon />
-                </IconButton>
-              </Flex>
+          <Flex justifyContent="center">
+            <IconButton
+              onClick={() => {
+                setApprovalSubmitted(false)
+                onSwitchTokens()
+              }}
+            >
+              <ChangeIcon />
+            </IconButton>
+          </Flex>
 
-              <Box>
-                <Box display="flex" alignItems="baseline" mb={1}>
-                  <Typography variant="body2" color="text.secondary">
-                    Balance
-                  </Typography>
-                  <Typography fontSize={14} ml={1} color="text.secondary" style={{ fontWeight: 'bold' }}>
-                    {!!currencies[Field.OUTPUT] && selectedCurrencyBalanceOutput
-                      ? selectedCurrencyBalanceOutput?.toSignificant(6)
-                      : '-'}
-                  </Typography>
-                </Box>
-                <Box display="flex" alignItems="center" justifyContent="space-between" mb={1}>
-                  <NumericalInput
-                    value={formattedAmounts[Field.OUTPUT]}
-                    onUserInput={handleTypeOutput}
-                    fontSize="1.75rem"
-                  />
-                  <CurrencySelect currency={currencies[Field.OUTPUT]} onClick={onPresentSelectCurrencyOutputModal} />
-                </Box>
-              </Box>
-              <SpaceBetweenFormat mb={1} mt={3} title="Slippage Tolerance" value={`${allowedSlippage / 100}%`} />
-              <Divider style={{ margin: isMobileOrTablet ? '24px 0px' : '32px 0px' }} />
-              <Flex flexDirection="column">
-                <Flex>
-                  {!account && <ConnectWalletButton fullWidth />}
-                  {account && (
+          <Box>
+            <Box display="flex" alignItems="baseline" mb={1}>
+              <Typography variant="body2" color="text.secondary">
+                Balance
+              </Typography>
+              <Typography fontSize={14} ml={1} color="text.secondary" style={{ fontWeight: 'bold' }}>
+                {!!currencies[Field.OUTPUT] && selectedCurrencyBalanceOutput
+                  ? selectedCurrencyBalanceOutput?.toSignificant(6)
+                  : '-'}
+              </Typography>
+            </Box>
+            <Box display="flex" alignItems="center" justifyContent="space-between" mb={1}>
+              <NumericalInput
+                value={formattedAmounts[Field.OUTPUT]}
+                onUserInput={handleTypeOutput}
+                fontSize="1.75rem"
+              />
+              <CurrencySelect currency={currencies[Field.OUTPUT]} onClick={onPresentSelectCurrencyOutputModal} />
+            </Box>
+          </Box>
+          <SpaceBetweenFormat mb={1} mt={3} title="Slippage Tolerance" value={`${allowedSlippage / 100}%`} />
+          <Divider style={{ margin: isMobileOrTablet ? '24px 0px' : '32px 0px' }} />
+          <Flex flexDirection="column">
+            <Flex>
+              {!account && <ConnectWalletButton fullWidth />}
+              {account && (
+                <>
+                  {showWrap && (
+                    <Button
+                      // width="100%"
+                      // scale={ButtonScales.LG}
+                      variant="contained"
+                      disabled={Boolean(wrapInputError)}
+                      onClick={onWrap}
+                      fullWidth
+                      // isLoading={wrapLoading}
+                    >
+                      {wrapType === WrapType.WRAP && 'Wrap'}
+                      {wrapType === WrapType.UNWRAP && 'Unwrap'}
+                    </Button>
+                  )}
+                  {!showWrap && (
                     <>
-                      {showWrap && (
+                      {!route && userHasSpecifiedInputOutput && (
                         <Button
                           // width="100%"
-                          // scale={ButtonScales.LG}
-                          variant="contained"
-                          disabled={Boolean(wrapInputError)}
-                          onClick={onWrap}
                           fullWidth
-                          // isLoading={wrapLoading}
+                          onClick={onClickSwapButton}
+                          id="swap-button"
+                          variant="contained"
+                          disabled={!isValid || !!swapCallbackError}
+                          color={isValid && priceImpactSeverity > 2 && !swapCallbackError ? 'error' : 'primary'}
+                          // isLoading={Boolean(!route && userHasSpecifiedInputOutput)}
                         >
-                          {wrapType === WrapType.WRAP && 'Wrap'}
-                          {wrapType === WrapType.UNWRAP && 'Unwrap'}
+                          Swap
                         </Button>
                       )}
-                      {!showWrap && (
-                        <>
-                          {!route && userHasSpecifiedInputOutput && (
+                      {(route || !userHasSpecifiedInputOutput) && (
+                        <Flex flexDirection="column" width="100%">
+                          {showApproveFlow && (
+                            <Flex
+                              width="100%"
+                              flexDirection={isMobileOrTablet ? 'column' : 'row'}
+                              justifyContent="space-between"
+                              alignItems={isMobileOrTablet ? 'flex-start' : 'center'}
+                              mb="20px"
+                            >
+                              <Flex alignItems="center">
+                                <Coin symbol={currencies[Field.INPUT]?.symbol} size={32} />
+                                <Text ml="12px" style={textStyle.R_16M} color="#999">
+                                  {`${currencies[Field.INPUT]?.symbol}`}
+                                </Text>
+                              </Flex>
+
+                              <Button
+                                // scale={ButtonScales.MD}
+                                onClick={onClickApproveBtn}
+                                disabled={approval !== ApprovalState.NOT_APPROVED}
+                                // isLoading={isApprovePending}
+                                variant="contained"
+                                color="secondary"
+                                style={{
+                                  width: isMobileOrTablet ? '100%' : '186px',
+                                  marginTop: isMobileOrTablet ? '8px' : '0px',
+                                }}
+                              >
+                                {`Approve ${currencies[Field.INPUT]?.symbol}`}
+                              </Button>
+                            </Flex>
+                          )}
+                          <Flex flexDirection="column" flex="1 1 0">
                             <Button
                               // width="100%"
+                              // scale={ButtonScales.LG}
                               fullWidth
                               onClick={onClickSwapButton}
                               id="swap-button"
                               variant="contained"
-                              disabled={!isValid || !!swapCallbackError}
-                              color={isValid && priceImpactSeverity > 2 && !swapCallbackError ? 'error' : 'primary'}
-                              // isLoading={Boolean(!route && userHasSpecifiedInputOutput)}
+                              disabled={!isValid || !!swapCallbackError || showApproveFlow || priceImpactSeverity > 3}
                             >
                               Swap
                             </Button>
-                          )}
-                          {(route || !userHasSpecifiedInputOutput) && (
-                            <Flex flexDirection="column" width="100%">
-                              {showApproveFlow && (
-                                <Flex
-                                  width="100%"
-                                  flexDirection={isMobileOrTablet ? 'column' : 'row'}
-                                  justifyContent="space-between"
-                                  alignItems={isMobileOrTablet ? 'flex-start' : 'center'}
-                                  mb="20px"
-                                >
-                                  <Flex alignItems="center">
-                                    <Coin symbol={currencies[Field.INPUT]?.symbol} size={32} />
-                                    <Text ml="12px" style={textStyle.R_16M} color="#999">
-                                      {`${currencies[Field.INPUT]?.symbol}`}
-                                    </Text>
-                                  </Flex>
-
-                                  <Button
-                                    // scale={ButtonScales.MD}
-                                    onClick={onClickApproveBtn}
-                                    disabled={approval !== ApprovalState.NOT_APPROVED}
-                                    // isLoading={isApprovePending}
-                                    variant="contained"
-                                    color="secondary"
-                                    style={{
-                                      width: isMobileOrTablet ? '100%' : '186px',
-                                      marginTop: isMobileOrTablet ? '8px' : '0px',
-                                    }}
-                                  >
-                                    {`Approve ${currencies[Field.INPUT]?.symbol}`}
-                                  </Button>
-                                </Flex>
-                              )}
-                              <Flex flexDirection="column" flex="1 1 0">
-                                <Button
-                                  // width="100%"
-                                  // scale={ButtonScales.LG}
-                                  fullWidth
-                                  onClick={onClickSwapButton}
-                                  id="swap-button"
-                                  variant="contained"
-                                  disabled={
-                                    !isValid || !!swapCallbackError || showApproveFlow || priceImpactSeverity > 3
-                                  }
-                                >
-                                  Swap
-                                </Button>
-                                {renderNoti()}
-                              </Flex>
-                            </Flex>
-                          )}
-                        </>
+                            {renderNoti()}
+                          </Flex>
+                        </Flex>
                       )}
                     </>
                   )}
-                </Flex>
+                </>
+              )}
+            </Flex>
 
-                {trade && (
-                  <Flex flexDirection="column" mt="24px">
-                    <Text style={isMobileOrTablet ? textStyle.R_14M : textStyle.R_16M} color="#666" mb="12px">
-                      Estimated Returns
+            {trade && (
+              <Flex flexDirection="column" mt="24px">
+                <Text style={isMobileOrTablet ? textStyle.R_14M : textStyle.R_16M} color="#666" mb="12px">
+                  Estimated Returns
+                </Text>
+
+                {Boolean(trade) && (
+                  <Flex
+                    flexDirection={isMobileOrTablet ? 'column' : 'row'}
+                    flex="1 1 0"
+                    justifyContent="space-between"
+                    mb="12px"
+                  >
+                    <Text mb="4px" style={textStyle.R_14R} color="#999">
+                      Price Rate
                     </Text>
+                    <TradePrice
+                      price={trade?.executionPrice}
+                      showInverted={showInverted}
+                      setShowInverted={setShowInverted}
 
-                    {Boolean(trade) && (
-                      <Flex
-                        flexDirection={isMobileOrTablet ? 'column' : 'row'}
-                        flex="1 1 0"
-                        justifyContent="space-between"
-                        mb="12px"
-                      >
-                        <Text mb="4px" style={textStyle.R_14R} color="#999">
-                          Price Rate
-                        </Text>
-                        <TradePrice
-                          price={trade?.executionPrice}
-                          showInverted={showInverted}
-                          setShowInverted={setShowInverted}
-
-                          // isPriceImpactCaution={!isPriceImpactCaution}
-                        />
-                      </Flex>
-                    )}
-                    <AdvancedSwapDetailsDropdown
-                      trade={trade}
-                      // isMobile={isMobileOrTablet}
                       // isPriceImpactCaution={!isPriceImpactCaution}
                     />
                   </Flex>
                 )}
+                <AdvancedSwapDetailsDropdown
+                  trade={trade}
+                  // isMobile={isMobileOrTablet}
+                  // isPriceImpactCaution={!isPriceImpactCaution}
+                />
               </Flex>
-
-              {/* <BottomGrouping>
-                {!account ? (
-                  <ConnectWalletButton fullWidth />
-                ) : showWrap ? (
-                  <Button disabled={Boolean(wrapInputError)} onClick={onWrap} fullWidth>
-                    {wrapInputError ??
-                      (wrapType === WrapType.WRAP ? 'Wrap' : wrapType === WrapType.UNWRAP ? 'Unwrap' : null)}
-                  </Button>
-                ) : noRoute && userHasSpecifiedInputOutput ? (
-                  <GreyCard style={{ textAlign: 'center' }}>
-                    <Text>Insufficient liquidity for this trade.</Text>
-                  </GreyCard>
-                ) : showApproveFlow ? (
-                  <RowBetween className="mb-3">
-                    <Button
-                      onClick={approveCallback}
-                      disabled={approval !== ApprovalState.NOT_APPROVED || approvalSubmitted}
-                      style={{ width: '48%' }}
-                      variant={approval === ApprovalState.APPROVED ? 'success' : 'primary'}
-                    >
-                      {approval === ApprovalState.PENDING ? (
-                        <AutoRow gap="6px" justify="center">
-                          Approving <Loader stroke="white" />
-                        </AutoRow>
-                      ) : approvalSubmitted && approval === ApprovalState.APPROVED ? (
-                        'Approved'
-                      ) : (
-                        `Approve ${currencies[Field.INPUT]?.symbol}`
-                      )}
-                    </Button>
-                    <Button
-                      onClick={() => {
-                        if (isExpertMode) {
-                          handleSwap()
-                        } else {
-                          setSwapState({
-                            tradeToConfirm: trade,
-                            attemptingTxn: false,
-                            swapErrorMessage: undefined,
-                            showConfirm: true,
-                            txHash: undefined,
-                          })
-                        }
-                      }}
-                      radii="card"
-                      style={{ width: '48%' }}
-                      id="swap-button"
-                      disabled={
-                        !isValid || approval !== ApprovalState.APPROVED || (priceImpactSeverity > 3 && !isExpertMode)
-                      }
-                      variant={isValid && priceImpactSeverity > 2 ? 'danger' : 'primary'}
-                    >
-                      {priceImpactSeverity > 3 && !isExpertMode
-                        ? `Price Impact High`
-                        : `Swap${priceImpactSeverity > 2 ? ' Anyway' : ''}`}
-                    </Button>
-                  </RowBetween>
-                ) : (
-                  <Button
-                    onClick={() => {
-                      if (isExpertMode) {
-                        handleSwap()
-                      } else {
-                        setSwapState({
-                          tradeToConfirm: trade,
-                          attemptingTxn: false,
-                          swapErrorMessage: undefined,
-                          showConfirm: true,
-                          txHash: undefined,
-                        })
-                      }
-                    }}
-                    id="swap-button"
-                    radii="card"
-                    disabled={!isValid || (priceImpactSeverity > 3 && !isExpertMode) || !!swapCallbackError}
-                    variant={isValid && priceImpactSeverity > 2 && !swapCallbackError ? 'danger' : 'primary'}
-                    fullWidth
-                  >
-                    {swapInputError ||
-                      (priceImpactSeverity > 3 && !isExpertMode
-                        ? `Price Impact Too High`
-                        : `Swap${priceImpactSeverity > 2 ? ' Anyway' : ''}`)}
-                  </Button>
-                )}
-
-                {showApproveFlow && <ProgressSteps steps={[approval === ApprovalState.APPROVED]} />}
-                {isExpertMode && swapErrorMessage ? <SwapCallbackError error={swapErrorMessage} /> : null}
-              </BottomGrouping> */}
-            </Box>
-          </Card>
-        </>
-
-        <TokenWarningModal
-          isOpen={
-            urlLoadedTokens.filter(
-              (x) =>
-                x.address.toLowerCase() !== SIX_ADDRESS[chainId].toLowerCase() &&
-                x.address.toLowerCase() !== FINIX_ADDRESS[chainId].toLowerCase() &&
-                x.address.toLowerCase() !== WBNB_ADDRESS[chainId].toLowerCase() &&
-                x.address.toLowerCase() !== BUSD_ADDRESS[chainId].toLowerCase() &&
-                x.address.toLowerCase() !== USDT_ADDRESS[chainId].toLowerCase()
-            ).length > 0 && !dismissTokenWarning
-          }
-          tokens={urlLoadedTokens}
-          onConfirm={handleConfirmTokenWarning}
-        />
-        <SyrupWarningModal
-          isOpen={isSyrup}
-          transactionType={syrupTransactionType}
-          onConfirm={handleConfirmSyrupWarning}
-        />
-      </TimerWrapper>
+            )}
+          </Flex>
+        </Box>
+      </Card>
     </SmallestLayout>
   )
 }

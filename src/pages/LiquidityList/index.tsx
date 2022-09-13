@@ -28,6 +28,7 @@ import { TranslateString } from 'utils/translateTextHelpers'
 import { textStyle } from 'uikitV2/text'
 import Flip from '../../uikit-dev/components/Flip'
 import { Wrapper } from './styleds'
+import LiquidityList from './LiquidityList'
 
 const newTransactionsFirst = (a: TransactionDetails, b: TransactionDetails) => b.addedTime - a.addedTime
 
@@ -38,7 +39,7 @@ const TutorailsLink = styled(Link)`
   color: #1587c9;
 `
 
-export default function LiquidityList() {
+export default function Liquidity() {
   const { account, chainId, activate, deactivate } = useActiveWeb3React()
   const [isShowRightPanel, setIsShowRightPanel] = useState(false)
   const { isXl } = useMatchBreakpoints()
@@ -166,8 +167,9 @@ export default function LiquidityList() {
         </Box>
 
         <Wrapper>
-          <CardBody p="40px !important">
-            <div className="pa-6">
+          <CardBody pb={isMobileOrTablet ? '40px' : '80px'}>
+            <LiquidityList />
+            {/* <div className="pa-6">
               {!account ? (
                 <Flex flexDirection="column" justifyContent="center" alignItems="center" p="40px">
                   <Box mb="24px">
@@ -253,7 +255,7 @@ export default function LiquidityList() {
                   </Box>
                 </Flex>
               )}
-            </div>
+            </div> */}
           </CardBody>
         </Wrapper>
       </Card>

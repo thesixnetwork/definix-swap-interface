@@ -15,7 +15,7 @@ export default function SwapModalFooter({
   onConfirm,
   allowedSlippage,
   swapErrorMessage,
-  disabledConfirm
+  disabledConfirm,
 }: {
   trade: Trade
   allowedSlippage: number
@@ -26,7 +26,7 @@ export default function SwapModalFooter({
   const [showInverted, setShowInverted] = useState<boolean>(false)
   const slippageAdjustedAmounts = useMemo(() => computeSlippageAdjustedAmounts(trade, allowedSlippage), [
     allowedSlippage,
-    trade
+    trade,
   ])
   const { priceImpactWithoutFee, realizedLPFee } = useMemo(() => computeTradePriceBreakdown(trade), [trade])
   const severity = warningSeverity(priceImpactWithoutFee)
