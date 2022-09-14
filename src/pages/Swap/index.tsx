@@ -383,11 +383,9 @@ export default function Swap({
 
   const [onPresentConfirmModal] = useModal(
     <ConfirmSwapModal
-      isOpen={showConfirm}
       trade={trade}
       originalTrade={tradeToConfirm}
       onAcceptChanges={handleAcceptChanges}
-      attemptingTxn={attemptingTxn}
       txHash={txHash}
       recipient={recipient}
       allowedSlippage={allowedSlippage}
@@ -525,131 +523,111 @@ export default function Swap({
               <CurrencySelect currency={currencies[Field.OUTPUT]} onClick={onPresentSelectCurrencyOutputModal} />
             </Box>
           </Box>
+
           <SpaceBetweenFormat mb={1} mt={3} title="Slippage Tolerance" value={`${allowedSlippage / 100}%`} />
+
           <Divider style={{ margin: isMobileOrTablet ? '24px 0px' : '32px 0px' }} />
-          <Flex flexDirection="column">
-            <Flex>
-              {!account && <ConnectWalletButton fullWidth />}
-              {account && (
-                <>
-                  {showWrap && (
-                    <Button
-                      // width="100%"
-                      // scale={ButtonScales.LG}
-                      variant="contained"
-                      disabled={Boolean(wrapInputError)}
-                      onClick={onWrap}
-                      fullWidth
-                      // isLoading={wrapLoading}
-                    >
-                      {wrapType === WrapType.WRAP && 'Wrap'}
-                      {wrapType === WrapType.UNWRAP && 'Unwrap'}
-                    </Button>
-                  )}
-                  {!showWrap && (
-                    <>
-                      {!route && userHasSpecifiedInputOutput && (
-                        <Button
-                          // width="100%"
-                          fullWidth
-                          onClick={onClickSwapButton}
-                          id="swap-button"
-                          variant="contained"
-                          disabled={!isValid || !!swapCallbackError}
-                          color={isValid && priceImpactSeverity > 2 && !swapCallbackError ? 'error' : 'primary'}
-                          // isLoading={Boolean(!route && userHasSpecifiedInputOutput)}
-                        >
-                          Swap
-                        </Button>
-                      )}
-                      {(route || !userHasSpecifiedInputOutput) && (
-                        <Flex flexDirection="column" width="100%">
-                          {showApproveFlow && (
-                            <Flex
-                              width="100%"
-                              flexDirection={isMobileOrTablet ? 'column' : 'row'}
-                              justifyContent="space-between"
-                              alignItems={isMobileOrTablet ? 'flex-start' : 'center'}
-                              mb="20px"
-                            >
-                              <Flex alignItems="center">
-                                <Coin symbol={currencies[Field.INPUT]?.symbol} size={32} />
-                                <Text ml="12px" style={textStyle.R_16M} color="#999">
-                                  {`${currencies[Field.INPUT]?.symbol}`}
-                                </Text>
-                              </Flex>
 
-                              <Button
-                                // scale={ButtonScales.MD}
-                                onClick={onClickApproveBtn}
-                                disabled={approval !== ApprovalState.NOT_APPROVED}
-                                // isLoading={isApprovePending}
-                                variant="contained"
-                                color="secondary"
-                                style={{
-                                  width: isMobileOrTablet ? '100%' : '186px',
-                                  marginTop: isMobileOrTablet ? '8px' : '0px',
-                                }}
-                              >
-                                {`Approve ${currencies[Field.INPUT]?.symbol}`}
-                              </Button>
-                            </Flex>
-                          )}
-                          <Flex flexDirection="column" flex="1 1 0">
-                            <Button
-                              // width="100%"
-                              // scale={ButtonScales.LG}
-                              fullWidth
-                              onClick={onClickSwapButton}
-                              id="swap-button"
-                              variant="contained"
-                              disabled={!isValid || !!swapCallbackError || showApproveFlow || priceImpactSeverity > 3}
-                            >
-                              Swap
-                            </Button>
-                            {renderNoti()}
-                          </Flex>
-                        </Flex>
-                      )}
-                    </>
-                  )}
-                </>
-              )}
-            </Flex>
-
-            {trade && (
-              <Flex flexDirection="column" mt="24px">
-                <Text style={isMobileOrTablet ? textStyle.R_14M : textStyle.R_16M} color="#666" mb="12px">
-                  Estimated Returns
-                </Text>
-
-                {Boolean(trade) && (
-                  <Flex
-                    flexDirection={isMobileOrTablet ? 'column' : 'row'}
-                    flex="1 1 0"
-                    justifyContent="space-between"
-                    mb="12px"
+          <Flex>
+            {!account && <ConnectWalletButton fullWidth />}
+            {account && (
+              <>
+                {showWrap && (
+                  <Button
+                    // width="100%"
+                    // scale={ButtonScales.LG}
+                    variant="contained"
+                    disabled={Boolean(wrapInputError)}
+                    onClick={onWrap}
+                    fullWidth
+                    // isLoading={wrapLoading}
                   >
-                    <Text mb="4px" style={textStyle.R_14R} color="#999">
-                      Price Rate
-                    </Text>
-                    <TradePrice
-                      price={trade?.executionPrice}
-                      showInverted={showInverted}
-                      setShowInverted={setShowInverted}
-
-                      // isPriceImpactCaution={!isPriceImpactCaution}
-                    />
-                  </Flex>
+                    {wrapType === WrapType.WRAP && 'Wrap'}
+                    {wrapType === WrapType.UNWRAP && 'Unwrap'}
+                  </Button>
                 )}
-                <AdvancedSwapDetailsDropdown
-                  trade={trade}
-                  // isMobile={isMobileOrTablet}
-                  // isPriceImpactCaution={!isPriceImpactCaution}
-                />
-              </Flex>
+                {!showWrap && (
+                  <>
+                    {!route && userHasSpecifiedInputOutput && (
+                      <Button
+                        // width="100%"
+                        fullWidth
+                        onClick={onClickSwapButton}
+                        id="swap-button"
+                        variant="contained"
+                        size="large"
+                        disabled={!isValid || !!swapCallbackError}
+                        color={isValid && priceImpactSeverity > 2 && !swapCallbackError ? 'error' : 'primary'}
+                        // isLoading={Boolean(!route && userHasSpecifiedInputOutput)}
+                      >
+                        Swap
+                      </Button>
+                    )}
+                    {(route || !userHasSpecifiedInputOutput) && (
+                      <Flex flexDirection="column" width="100%">
+                        {showApproveFlow && (
+                          <Flex
+                            width="100%"
+                            flexDirection={isMobileOrTablet ? 'column' : 'row'}
+                            justifyContent="space-between"
+                            alignItems={isMobileOrTablet ? 'flex-start' : 'center'}
+                            mb="20px"
+                          >
+                            <Flex alignItems="center">
+                              <Coin symbol={currencies[Field.INPUT]?.symbol} size={32} />
+                              <Text ml="12px" style={textStyle.R_16M} color="#999">
+                                {`${currencies[Field.INPUT]?.symbol}`}
+                              </Text>
+                            </Flex>
+
+                            <Button
+                              // scale={ButtonScales.MD}
+                              onClick={onClickApproveBtn}
+                              disabled={approval !== ApprovalState.NOT_APPROVED}
+                              // isLoading={isApprovePending}
+                              variant="contained"
+                              color="secondary"
+                              style={{
+                                width: isMobileOrTablet ? '100%' : '186px',
+                                marginTop: isMobileOrTablet ? '8px' : '0px',
+                              }}
+                            >
+                              {`Approve ${currencies[Field.INPUT]?.symbol}`}
+                            </Button>
+                          </Flex>
+                        )}
+                        <Flex flexDirection="column" flex="1 1 0">
+                          <Button
+                            // width="100%"
+                            // scale={ButtonScales.LG}
+                            fullWidth
+                            onClick={onClickSwapButton}
+                            id="swap-button"
+                            variant="contained"
+                            size="large"
+                            disabled={!isValid || !!swapCallbackError || showApproveFlow || priceImpactSeverity > 3}
+                          >
+                            Swap
+                          </Button>
+                          {renderNoti()}
+                        </Flex>
+                      </Flex>
+                    )}
+                  </>
+                )}
+              </>
             )}
           </Flex>
+
+          {trade && (
+            <Box mt={3}>
+              <Typography fontWeight={600} color="text.secondary" mb={1.5}>
+                Estimated Returns
+              </Typography>
+
+              <AdvancedSwapDetailsDropdown trade={trade} showRoute />
+            </Box>
+          )}
         </Box>
       </Card>
     </SmallestLayout>

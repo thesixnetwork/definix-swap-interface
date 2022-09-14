@@ -32,14 +32,8 @@ export const SectionBreak = styled.div`
 export const BottomGrouping = styled.div``
 
 export const ErrorText = styled(Text)<{ severity?: 0 | 1 | 2 | 3 | 4 }>`
-  color: ${({ theme, severity }) =>
-    severity === 3 || severity === 4
-      ? theme.colors.failure
-      : severity === 2
-      ? theme.colors.binance
-      : severity === 1
-      ? theme.colors.text
-      : theme.colors.success};
+  color: ${({ severity }) =>
+    severity === 3 || severity === 4 ? '#ff5532' : severity === 2 ? '#fea948' : severity === 1 ? '#222222' : '#02a1a1'};
 `
 
 export const StyledBalanceMaxMini = styled.button`
@@ -97,8 +91,8 @@ const SwapCallbackErrorInner = styled.div`
   align-items: center;
   font-size: 0.825rem;
   width: 100%;
-  padding: 3rem 1.25rem 1rem 1rem;
-  margin-top: -2rem;
+  padding: 1rem;
+  margin-top: 1rem;
   color: ${({ theme }) => theme.colors.failure};
   z-index: -1;
   p {

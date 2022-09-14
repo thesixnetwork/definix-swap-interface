@@ -1,15 +1,16 @@
 import { HelpOutlineRounded } from '@mui/icons-material'
-import { Box, Tooltip, Typography } from '@mui/material'
+import { Box, BoxProps, Tooltip, Typography } from '@mui/material'
 import React from 'react'
 
-const SpaceBetweenFormat = ({
-  title = '',
-  value = '',
-  titleElm = undefined,
-  valueElm = undefined,
-  tooltip = '',
-  ...props
-}) => {
+interface Type {
+  title?: string
+  value?: string
+  titleElm?: any
+  valueElm?: any
+  tooltip?: string
+}
+
+const SpaceBetweenFormat = ({ title, value, titleElm, valueElm, tooltip, ...props }: BoxProps & Type) => {
   return (
     <Box display="flex" alignItems="center" justifyContent="space-between" {...props}>
       {titleElm || (

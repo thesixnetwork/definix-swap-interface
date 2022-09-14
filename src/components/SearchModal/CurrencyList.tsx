@@ -3,7 +3,6 @@ import { Currency, CurrencyAmount, currencyEquals, ETHER, Token } from 'definixs
 import React, { CSSProperties, MutableRefObject, useCallback, useMemo } from 'react'
 import { FixedSizeList } from 'react-window'
 import styled from 'styled-components'
-import { Text } from 'uikit-dev'
 import { useActiveWeb3React } from '../../hooks'
 import { useIsUserAddedToken } from '../../hooks/Tokens'
 import { useSelectedTokenList, WrappedTokenInfo } from '../../state/lists/hooks'
@@ -21,7 +20,7 @@ function currencyKey(currency: Currency): string {
   return currency instanceof Token ? currency.address : currency === ETHER ? 'ETHER' : ''
 }
 
-const StyledBalanceText = styled(Text)`
+const StyledBalanceText = styled(Typography)`
   white-space: nowrap;
   overflow: hidden;
   max-width: 5rem;
@@ -153,7 +152,7 @@ function CurrencyRow({
 
       <TokenTags currency={currency} />
 
-      <RowFixed style={{ justifySelf: 'flex-end' }}>
+      <RowFixed style={{ justifySelf: 'flex-end', margin: 0 }}>
         {balance ? <Balance balance={balance} /> : account ? <Loader /> : null}
       </RowFixed>
     </MenuItem>

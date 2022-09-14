@@ -1,7 +1,7 @@
+import { KeyboardDoubleArrowRightRounded } from '@mui/icons-material'
+import { Typography } from '@mui/material'
 import { Trade } from 'definixswap-sdk'
 import React, { Fragment, memo } from 'react'
-import { ArrowRight } from 'react-feather'
-import { Text } from 'uikit-dev'
 import CurrencyLogo from '../CurrencyLogo'
 
 export default memo(function SwapRoute({ trade }: { trade: Trade }) {
@@ -12,13 +12,15 @@ export default memo(function SwapRoute({ trade }: { trade: Trade }) {
         return (
           // eslint-disable-next-line react/no-array-index-key
           <Fragment key={i}>
-            <div className="flex flex-column align-center">
-              <CurrencyLogo currency={token} size="1.5rem" />
-              <Text fontSize="12px" textAlign="center" className="mt-1">
+            <div className="flex align-center">
+              <CurrencyLogo currency={token} size="22px" />
+              <Typography variant="body2" fontWeight="bold" color="text.secondary" ml={0.75}>
                 {token.symbol}
-              </Text>
+              </Typography>
             </div>
-            {isLastItem ? null : <ArrowRight size="20" className="mx-3" style={{ marginTop: '-24px' }} />}
+            {isLastItem ? null : (
+              <KeyboardDoubleArrowRightRounded sx={{ fontSize: '1rem', color: 'text.secondary', mx: 1 }} />
+            )}
           </Fragment>
         )
       })}
