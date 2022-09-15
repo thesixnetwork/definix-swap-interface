@@ -1,7 +1,7 @@
 import { Box, Typography } from '@mui/material'
 import React from 'react'
 
-const Coin = ({ name = '', symbol = '', size = 20, fontWeight = 'bold', large = false, ...props }) => {
+const Coin = ({ name = '', symbol = '', size = 20, fontWeight = 'bold', color = '', large = false, ...props }) => {
   return (
     <Box display="flex" alignItems="center" {...props}>
       {symbol && (
@@ -14,7 +14,7 @@ const Coin = ({ name = '', symbol = '', size = 20, fontWeight = 'bold', large = 
         />
       )}
       {name && (
-        <Typography variant={large ? 'body1' : 'body2'} fontWeight={fontWeight}>
+        <Typography variant={large ? 'body1' : 'body2'} fontWeight={fontWeight} color={color}>
           {name}
         </Typography>
       )}

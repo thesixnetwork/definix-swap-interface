@@ -2,7 +2,7 @@ import { Credentials, StringTranslations } from '@crowdin/crowdin-api-client'
 import { useWeb3React } from '@web3-react/core'
 import { injected } from 'connectors'
 import React, { Suspense, useEffect, useState } from 'react'
-import { HashRouter, Route, Switch } from 'react-router-dom'
+import { BrowserRouter, Route, Switch } from 'react-router-dom'
 import Menu from '../components/Menu'
 import Popups from '../components/Popups'
 import Web3ReactManager from '../components/Web3ReactManager'
@@ -84,7 +84,7 @@ export default function App() {
 
   return (
     <Suspense fallback={null}>
-      <HashRouter>
+      <BrowserRouter>
         <LanguageContext.Provider
           value={{ selectedLanguage, setSelectedLanguage, translatedLanguage, setTranslatedLanguage }}
         >
@@ -98,18 +98,23 @@ export default function App() {
                   <Route exact path="/swap/:currencyIdA" component={RedirectToSwap} />
                   <Route exact strict path="/find" component={PoolFinder} />
                   <Route exact strict path="/liquidity" component={Pool} />
-                  <Route exact path="/add" component={AddLiquidity} />
-                  <Route exact path="/list" component={LiquidityList} />
-                  <Route exact strict path="/remove/:currencyIdA/:currencyIdB" component={RemoveLiquidity} />
+                  <Route exact path="/liquidity/add" component={AddLiquidity} />
+                  <Route exact path="/liquidity/list" component={LiquidityList} />
+                  <Route exact strict path="/liquidity/remove/:currencyIdA/:currencyIdB" component={RemoveLiquidity} />
 
                   {/* <Route path="/xxx">
                         <WaitingPage pageName="XXX" openDate="Tue Mar 30 2021 08:00:00 GMT+0700 (Indochina Time)" />
                       </Route> */}
 
                   {/* Redirection: These old routes are still used in the code base */}
-                  <Route exact path="/add/:currencyIdA" component={RedirectOldAddLiquidityPathStructure} />
-                  <Route exact path="/add/:currencyIdA/:currencyIdB" component={RedirectDuplicateTokenIds} />
-                  <Route exact strict path="/remove/:tokens" component={RedirectOldRemoveLiquidityPathStructure} />
+                  <Route exact path="/liquidity/add/:currencyIdA" component={RedirectOldAddLiquidityPathStructure} />
+                  <Route exact path="/liquidity/add/:currencyIdA/:currencyIdB" component={RedirectDuplicateTokenIds} />
+                  <Route
+                    exact
+                    strict
+                    path="/liquidity/remove/:tokens"
+                    component={RedirectOldRemoveLiquidityPathStructure}
+                  />
 
                   <Route component={RedirectPathToSwapOnly} />
                 </Switch>
@@ -117,7 +122,7 @@ export default function App() {
             </Menu>
           </TranslationsContext.Provider>
         </LanguageContext.Provider>
-      </HashRouter>
+      </BrowserRouter>
     </Suspense>
   )
 }

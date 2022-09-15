@@ -8,11 +8,26 @@ interface Type {
   titleElm?: any
   valueElm?: any
   tooltip?: string
+  noWrap?: boolean
 }
 
-const SpaceBetweenFormat = ({ title, value, titleElm, valueElm, tooltip, ...props }: BoxProps & Type) => {
+const SpaceBetweenFormat = ({
+  title,
+  value,
+  titleElm,
+  valueElm,
+  tooltip,
+  noWrap = false,
+  ...props
+}: BoxProps & Type) => {
   return (
-    <Box display="flex" alignItems="center" justifyContent="space-between" {...props}>
+    <Box
+      display="flex"
+      flexDirection={{ xs: noWrap ? 'row' : 'column', md: 'row' }}
+      alignItems={{ md: 'center' }}
+      justifyContent="space-between"
+      {...props}
+    >
       {titleElm || (
         <Typography variant="body2" color="text.disabled" className="flex align-center">
           {title}
@@ -24,7 +39,7 @@ const SpaceBetweenFormat = ({ title, value, titleElm, valueElm, tooltip, ...prop
         </Typography>
       )}
       {valueElm || (
-        <Typography variant="body2" color="text.secondary" fontWeight="bold">
+        <Typography variant="body2" color="text.secondary" fontWeight="500">
           {value}
         </Typography>
       )}

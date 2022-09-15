@@ -52,7 +52,7 @@ const MenuItem = ({ menu }) => {
 const GroupMenuItem = ({ menu }) => {
   const [open, setOpen] = useState(false)
   const location = useLocation()
-  const isActive = menu.items.filter((m) => m.href === location.pathname).length > 0 && !menu.notHighlight
+  const isActive = menu.items.filter((m) => location.pathname.includes(m.href)).length > 0 && !menu.notHighlight
   const isExternal = menu.href.indexOf('http') > -1
 
   return (
@@ -75,7 +75,7 @@ const GroupMenuItem = ({ menu }) => {
             <ListItemButton
               sx={{ pl: 5 }}
               component={isExternal ? 'a' : Link}
-              selected={location.pathname === m.href && !m.notHighlight}
+              selected={location.pathname.includes(m.href) && !m.notHighlight}
               to={m.href}
               target={m.newTab ? '_blank' : '_self'}
             >
@@ -119,7 +119,7 @@ const PanelBodyV2: React.FC<Props> = (props) => {
         )}
         <List component="nav" sx={{ px: '16px', py: { xs: '32px', md: '8px' } }}>
           {links.map((link) =>
-            link.items ? <GroupMenuItem key={link.label} menu={link} /> : <MenuItem key={link.label} menu={link} />,
+            link.items ? <GroupMenuItem key={link.label} menu={link} /> : <MenuItem key={link.label} menu={link} />
           )}
         </List>
 

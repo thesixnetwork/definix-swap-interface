@@ -107,27 +107,27 @@ export default function PoolFinder() {
     if (pair) {
       addPair(pair)
       // toastSuccess('Import Complete')
-      history.replace(`/add`)
+      history.replace(`/liquidity/add`)
     }
   }, [pair, addPair, history])
 
   const onClickAddLiquidityButton = useCallback(
     (currencyId0, currencyId1) => {
-      history.replace(`/add/${currencyId0}/${currencyId1}`)
+      history.replace(`/liquidity/add/${currencyId0}/${currencyId1}`)
     },
     [history]
   )
 
   useEffect(() => {
     if (!account) {
-      history.push('/add')
+      history.push('/liquidity/add')
     }
   }, [account, history])
 
   return (
     <SmallestLayout>
       <Flex flexDirection="column" width={isMobile ? '100%' : '629px'} mb="40px">
-        <Flex mb="20px" onClick={() => history.replace('/add')} style={{ cursor: 'pointer' }}>
+        <Flex mb="20px" onClick={() => history.replace('/liquidity/add')} style={{ cursor: 'pointer' }}>
           <ArrowBackIcon color="#999" />
           <Text
             ml="6px"
@@ -251,7 +251,7 @@ export default function PoolFinder() {
                       You don’t have liquidity in this pool yet.
                     </Text>
 
-                    <StyledInternalLink to={`/add/${currencyId(currency0)}/${currencyId(currency1)}`}>
+                    <StyledInternalLink to={`/liquidity/add/${currencyId(currency0)}/${currencyId(currency1)}`}>
                       <TranslatedText translationId={100}>Add Liquidity</TranslatedText>
                     </StyledInternalLink>
                   </AutoColumn>
@@ -263,7 +263,7 @@ export default function PoolFinder() {
                   <Text color="textSubtle" textAlign="center" fontSize="16px" className="mb-1">
                     No pool found.
                   </Text>
-                  <StyledInternalLink to={`/add/${currencyId(currency0)}/${currencyId(currency1)}`}>
+                  <StyledInternalLink to={`/liquidity/add/${currencyId(currency0)}/${currencyId(currency1)}`}>
                     Create pool.
                   </StyledInternalLink>
                 </AutoColumn>

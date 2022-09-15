@@ -448,7 +448,7 @@ export default function Swap({
       />
 
       <Card>
-        <Box p={5} display="flex" flexDirection="column">
+        <Box p={{ xs: 2.5, md: 5 }} display="flex" flexDirection="column">
           <Box>
             <Box display="flex" alignItems="baseline" mb={1}>
               <Typography variant="body2" color="text.secondary">
@@ -621,7 +621,7 @@ export default function Swap({
 
           {trade && (
             <Box mt={3}>
-              <Typography fontWeight={600} color="text.secondary" mb={1.5}>
+              <Typography fontWeight={500} color="text.secondary" mb={1.5}>
                 Estimated Returns
               </Typography>
 

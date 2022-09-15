@@ -13,7 +13,7 @@ export function RedirectOldRemoveLiquidityPathStructure({
   }
   const [currency0, currency1] = tokens.split('-')
 
-  return <Redirect to={`/remove/${currency0}/${currency1}`} />
+  return <Redirect to={`/liquidity/remove/${currency0}/${currency1}`} />
 }
 
 export default RedirectOldRemoveLiquidityPathStructure

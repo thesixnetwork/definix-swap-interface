@@ -132,10 +132,10 @@ export default function Liquidity() {
   const changeTab = useCallback(
     (tab: string) => {
       if (tab === tabNames[0].id) {
-        history.push('/add')
+        history.push('/liquidity/add')
       }
       if (tab === tabNames[1].id) {
-        history.push('/list')
+        history.push('/liquidity/list')
       }
     },
     [history, tabNames]
