@@ -23,12 +23,22 @@ export function PoolPriceBar({
         title="Price Rate"
         valueElm={
           <div>
-            <Typography variant="body2" color="text.secondary" align="right" fontWeight="500">{`1 ${
-              currencies[Field.CURRENCY_A]?.symbol
-            } = ${price?.toSignificant(6) ?? '-'} ${currencies[Field.CURRENCY_B]?.symbol}`}</Typography>
-            <Typography variant="body2" color="text.secondary" align="right" fontWeight="500">{`1 ${
+            <Typography
+              variant="body2"
+              color="text.secondary"
+              sx={{ textAlign: { md: 'right' } }}
+              fontWeight="500"
+            >{`1 ${currencies[Field.CURRENCY_A]?.symbol} = ${price?.toSignificant(6) ?? '-'} ${
               currencies[Field.CURRENCY_B]?.symbol
-            } = ${price?.invert()?.toSignificant(6) ?? '-'} ${currencies[Field.CURRENCY_A]?.symbol}`}</Typography>
+            }`}</Typography>
+            <Typography
+              variant="body2"
+              color="text.secondary"
+              sx={{ textAlign: { md: 'right' } }}
+              fontWeight="500"
+            >{`1 ${currencies[Field.CURRENCY_B]?.symbol} = ${price?.invert()?.toSignificant(6) ?? '-'} ${
+              currencies[Field.CURRENCY_A]?.symbol
+            }`}</Typography>
           </div>
         }
         sx={{ alignItems: 'flex-start' }}

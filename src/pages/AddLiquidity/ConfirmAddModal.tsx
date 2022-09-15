@@ -1,20 +1,18 @@
-import React, { useCallback, useState, useEffect, useMemo } from 'react'
-import { TransactionResponse } from '@ethersproject/providers'
 import { BigNumber } from '@ethersproject/bignumber'
-import { ethers } from 'ethers'
-import { abi as IUniswapV2Router02ABI } from '@uniswap/v2-periphery/build/IUniswapV2Router02.json'
-import { InjectedModalProps, ModalBody, useMatchBreakpoints } from '@fingerlabs/definixswap-uikit-v2'
-import { Currency, CurrencyAmount, Percent, Price, TokenAmount, ETHER } from 'definixswap-sdk'
-import { useTransactionAdder } from 'state/transactions/hooks'
+import { TransactionResponse } from '@ethersproject/providers'
+import { InjectedModalProps, useMatchBreakpoints } from '@fingerlabs/definixswap-uikit-v2'
+import { Divider } from '@mui/material'
+import { Currency, CurrencyAmount, ETHER, Percent, Price, TokenAmount } from 'definixswap-sdk'
+import { useActiveWeb3React } from 'hooks'
+import React, { useEffect, useMemo, useState } from 'react'
 import { Field } from 'state/mint/actions'
+import { useTransactionAdder } from 'state/transactions/hooks'
+import { useUserDeadline, useUserSlippageTolerance } from 'state/user/hooks'
+import ModalV2 from 'uikitV2/components/ModalV2'
 import { calculateGasMargin, calculateSlippageAmount, getRouterContract } from 'utils'
 import { wrappedCurrency } from 'utils/wrappedCurrency'
-import { useUserDeadline, useUserSlippageTolerance } from 'state/user/hooks'
-import { useActiveWeb3React } from 'hooks'
-import { Modal } from 'uikit-dev'
-import { Box, Divider } from '@mui/material'
-import ModalHeader from './ModalHeader'
 import ConfirmAddModalBottom from './ConfirmAddModalBottom'
+import ModalHeader from './ModalHeader'
 
 interface Props extends InjectedModalProps {
   noLiquidity?: boolean
@@ -184,23 +182,19 @@ export default function ConfirmAddModal({
   }, [errorMsg, onDismissModal, onDismiss])
 
   return (
-    <Modal title="Confirm Add Liquidity" onDismiss={onDismiss} isRainbow={false}>
-      <ModalBody isBody>
-        <Box width={isMobile ? '100%' : '472px'} height={isMobile ? '100vh' : '100%'}>
-          <ModalHeader noLiquidity={noLiquidity} currencies={currencies} liquidityMinted={liquidityMinted} />
-          <Divider style={{ marginBottom: 24, marginTop: 20 }} />
-          <ConfirmAddModalBottom
-            price={price}
-            currencies={currencies}
-            parsedAmounts={parsedAmounts}
-            noLiquidity={noLiquidity}
-            onAdd={onAdd}
-            isPending={attemptingTxn}
-            poolTokenPercentage={poolTokenPercentage}
-            allowedSlippage={allowedSlippage}
-          />
-        </Box>
-      </ModalBody>
-    </Modal>
+    <ModalV2 title="Confirm Add Liquidity" onDismiss={onDismiss} sx={{ width: '100%', maxWidth: '520px' }}>
+      <ModalHeader noLiquidity={noLiquidity} currencies={currencies} liquidityMinted={liquidityMinted} />
+      <Divider style={{ marginBottom: 24, marginTop: 20 }} />
+      <ConfirmAddModalBottom
+        price={price}
+        currencies={currencies}
+        parsedAmounts={parsedAmounts}
+        noLiquidity={noLiquidity}
+        onAdd={onAdd}
+        isPending={attemptingTxn}
+        poolTokenPercentage={poolTokenPercentage}
+        allowedSlippage={allowedSlippage}
+      />
+    </ModalV2>
   )
 }

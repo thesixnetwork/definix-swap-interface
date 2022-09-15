@@ -1,24 +1,10 @@
-import React, { useMemo } from 'react'
-import { Currency, CurrencyAmount, Fraction, Percent } from 'definixswap-sdk'
-import styled from 'styled-components'
-import { Flex, Text, NotiIcon } from '@fingerlabs/definixswap-uikit-v2'
+import { ErrorRounded } from '@mui/icons-material'
+import { Button, Typography } from '@mui/material'
+import { Currency, CurrencyAmount, Percent, Price } from 'definixswap-sdk'
+import React from 'react'
 import { Field } from 'state/mint/actions'
-import { useMatchBreakpoints } from 'uikit-dev'
-import { textStyle } from 'uikitV2/text'
-import { mediaQueries } from 'uikitV2/base'
-import { Button } from '@mui/material'
-
-const TitleText = styled(Text)`
-  ${textStyle.R_16M}
-  margin-bottom: 12px;
-  ${mediaQueries.mobileSwap} {
-    ${textStyle.R_16M}
-  }
-`
-
-const StyledNotiIcon = styled(NotiIcon)`
-  flex-shrink: 0;
-`
+import SpaceBetweenFormat from 'uikitV2/components/SpaceBetweenFormat'
+import { PoolPriceBar } from './PoolPriceBar'
 
 function ConfirmAddModalBottom({
   noLiquidity,
@@ -31,7 +17,7 @@ function ConfirmAddModalBottom({
   isPending,
 }: {
   noLiquidity?: boolean
-  price?: Fraction
+  price?: Price
   currencies: { [field in Field]?: Currency }
   parsedAmounts: { [field in Field]?: CurrencyAmount }
   poolTokenPercentage?: Percent
@@ -39,66 +25,40 @@ function ConfirmAddModalBottom({
   allowedSlippage: number
   isPending: boolean
 }) {
-  const { isXl } = useMatchBreakpoints()
-  const isMobile = !isXl
-
   return (
-    <Flex flexDirection="column">
-      <Flex flexDirection="column">
-        <TitleText color="#666" mb="12px">
-          Estimated Returns
-        </TitleText>
+    <div>
+      <Typography fontWeight={500} color="text.secondary" mb={1.5}>
+        Estimated Returns
+      </Typography>
 
-        <Flex flexDirection={isMobile ? 'column' : 'row'} justifyContent="space-between" mb="8px">
-          <Text style={textStyle.R_14R} color="#999" mb={isMobile ? '4px' : '0px'}>
-            Deposited
-          </Text>
-
-          <Flex flexDirection="column" alignItems={isMobile ? 'flex-start' : 'flex-end'}>
-            <Text style={textStyle.R_14M} color="#666">
+      <SpaceBetweenFormat
+        title="Deposited"
+        valueElm={
+          <div>
+            <Typography variant="body2" color="text.secondary" sx={{ textAlign: { md: 'right' } }} fontWeight="500">
               {parsedAmounts[Field.CURRENCY_A]?.toSignificant(6)} {currencies[Field.CURRENCY_A]?.symbol}
-            </Text>
-            <Text style={textStyle.R_14M} color="#666">
+            </Typography>
+            <Typography variant="body2" color="text.secondary" sx={{ textAlign: { md: 'right' } }} fontWeight="500">
               {parsedAmounts[Field.CURRENCY_B]?.toSignificant(6)} {currencies[Field.CURRENCY_B]?.symbol}
-            </Text>
-          </Flex>
-        </Flex>
+            </Typography>
+          </div>
+        }
+        sx={{ alignItems: 'flex-start' }}
+        mb={1.5}
+      />
 
-        <Flex flexDirection={isMobile ? 'column' : 'row'} justifyContent="space-between" mb="8px">
-          <Text style={textStyle.R_14R} color="#999" mb={isMobile ? '4px' : '0px'}>
-            Price Rate
-          </Text>
-          <Flex flexDirection="column" alignItems={isMobile ? 'flex-start' : 'flex-end'}>
-            <Text style={textStyle.R_14M} color="#666">
-              {`1 ${currencies[Field.CURRENCY_A]?.symbol} = ${price?.toSignificant(4)} ${
-                currencies[Field.CURRENCY_B]?.symbol
-              }`}
-            </Text>
-            <Text style={textStyle.R_14M} color="#666">
-              {`1 ${currencies[Field.CURRENCY_B]?.symbol} = ${price?.invert().toSignificant(4)} ${
-                currencies[Field.CURRENCY_A]?.symbol
-              }`}
-            </Text>
-          </Flex>
-        </Flex>
-
-        <Flex flexDirection={isMobile ? 'column' : 'row'} justifyContent="space-between">
-          <Text style={textStyle.R_14R} color="#999" mb={isMobile ? '4px' : '0px'}>
-            Share of Pool
-          </Text>
-          <Text style={textStyle.R_14M} color="#666">
-            {noLiquidity ? '100' : poolTokenPercentage?.toSignificant(4)}%
-          </Text>
-        </Flex>
-      </Flex>
+      <PoolPriceBar
+        currencies={currencies}
+        poolTokenPercentage={poolTokenPercentage}
+        noLiquidity={noLiquidity}
+        price={price}
+      />
 
       {!noLiquidity && (
-        <Flex alignItems="flex-start" mt="20px">
-          <StyledNotiIcon />
-          <Text mt="-1px" ml="4px" style={{ ...textStyle.R_12R, whiteSpace: 'pre-line' }} color="#999">
-            Output is estimated. If the price changes by more than 0.5% your transaction will revert.
-          </Text>
-        </Flex>
+        <Typography variant="caption" color="text.disabled" display="flex" mt={2.5}>
+          <ErrorRounded sx={{ fontSize: '0.875rem', color: 'text.disabled', mr: 1, mt: '2px' }} /> You are the first
+          liquidity Output is estimated. If the price changes by more than 0.5% your transaction will revert.
+        </Typography>
       )}
 
       <Button
@@ -106,13 +66,14 @@ function ConfirmAddModalBottom({
         color="primary"
         onClick={onAdd}
         fullWidth
+        size="large"
         // scale={ButtonScales.LG}
         // isLoading={isPending}
         style={{ marginTop: 32 }}
       >
         {noLiquidity ? 'Create Pool & Supply' : 'Add Liquidity'}
       </Button>
-    </Flex>
+    </div>
   )
 }
 
