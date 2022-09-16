@@ -1,20 +1,15 @@
-import { Box, styled, Typography } from '@mui/material'
+import { Box, Button, Chip, styled, Typography, useMediaQuery, useTheme } from '@mui/material'
 import { JSBI, Pair, Percent } from 'definixswap-sdk'
 import React, { useState } from 'react'
-import { ChevronDown, ChevronUp } from 'react-feather'
 import { Link } from 'react-router-dom'
-import { Button, Text } from 'uikit-dev'
 import SpaceBetweenFormat from 'uikitV2/components/SpaceBetweenFormat'
 import { useTotalSupply } from '../../data/TotalSupply'
 import { useActiveWeb3React } from '../../hooks'
 import { useTokenBalance } from '../../state/wallet/hooks'
 import { currencyId } from '../../utils/currencyId'
 import { unwrappedToken } from '../../utils/wrappedCurrency'
-import { HoverCard } from '../Card'
-import { AutoColumn } from '../Column'
-import CurrencyLogo from '../CurrencyLogo'
 import DoubleCurrencyLogo from '../DoubleLogo'
-import { RowBetween, RowFixed } from '../Row'
+import { RowBetween } from '../Row'
 import { Dots } from '../swap/styleds'
 
 const Dot = styled('div')`
@@ -23,6 +18,18 @@ const Dot = styled('div')`
   width: 3px;
   height: 3px;
   margin-right: 6px;
+`
+
+const CustomChip = styled(Chip)`
+  background: ${({ theme }) => theme.palette.info.main};
+  color: white;
+  font-weight: normal;
+  font-size: 0.75rem;
+  width: 58px;
+  height: 22px;
+  min-height: initial;
+  margin-right: 6px;
+  padding: 2px 0px;
 `
 
 export const FixedHeightRow = styled(RowBetween)`
@@ -114,6 +121,8 @@ export function MinimalPositionCard({ pair, showUnwrapped = false }: PositionCar
 
 export default function FullPositionCard({ pair }: PositionCardProps) {
   const { account } = useActiveWeb3React()
+  const theme = useTheme()
+  const mdUp = useMediaQuery(theme.breakpoints.up('md'))
 
   const currency0 = unwrappedToken(pair.token0)
   const currency1 = unwrappedToken(pair.token1)
@@ -141,77 +150,71 @@ export default function FullPositionCard({ pair }: PositionCardProps) {
       : [undefined, undefined]
 
   return (
-    <HoverCard>
-      <AutoColumn gap="12px">
-        <FixedHeightRow onClick={() => setShowMore(!showMore)} style={{ cursor: 'pointer' }}>
-          <RowFixed>
-            <DoubleCurrencyLogo currency0={currency0} currency1={currency1} margin size={20} />
-            <Text bold fontSize="16px !important">
-              {!currency0 || !currency1 ? <Dots>Loading</Dots> : `${currency0.symbol}/${currency1.symbol}`}
-            </Text>
-          </RowFixed>
-          <RowFixed>
-            {showMore ? <ChevronUp size="20" className="ml-2" /> : <ChevronDown size="20" className="ml-2" />}
-          </RowFixed>
-        </FixedHeightRow>
+    <Box
+      py={{ xs: 3, md: 2 }}
+      display="flex"
+      alignItems={{ md: 'center' }}
+      flexDirection={{ xs: 'column', md: 'row' }}
+      sx={{ '&:not(:last-of-type)': { borderBottom: '1px solid #e0e0e0' } }}
+    >
+      <Box className="flex align-center" pr={{ md: 2.5 }} mb={{ xs: 2.5, md: 0 }}>
+        <DoubleCurrencyLogo currency0={currency0} currency1={currency1} margin size={32} />
 
-        {showMore && (
-          <AutoColumn gap="8px">
-            <FixedHeightRow>
-              <RowFixed>
-                <Text>Pooled {currency0.symbol}:</Text>
-              </RowFixed>
-              {token0Deposited ? (
-                <RowFixed>
-                  <Text ml="6px">{token0Deposited?.toSignificant(6)}</Text>
-                  <CurrencyLogo size="20px" style={{ marginLeft: '8px' }} currency={currency0} />
-                </RowFixed>
-              ) : (
-                '-'
-              )}
-            </FixedHeightRow>
+        <div>
+          {mdUp && (
+            <Typography variant="caption" className="d-block" color="text.disabled" mb={0.75}>
+              LP
+            </Typography>
+          )}
+          <Typography fontWeight={500} mb={0.5}>
+            {!currency0 || !currency1 ? <Dots>Loading</Dots> : `${currency0.symbol}-${currency1.symbol}`}
+          </Typography>
+          <Typography variant="body2" fontWeight={500} color="text.secondary" width="130px">
+            {userPoolBalance ? userPoolBalance.toSignificant(4) : '-'}
+          </Typography>
+        </div>
+      </Box>
 
-            <FixedHeightRow>
-              <RowFixed>
-                <Text>Pooled {currency1.symbol}:</Text>
-              </RowFixed>
-              {token1Deposited ? (
-                <RowFixed>
-                  <Text ml="6px">{token1Deposited?.toSignificant(6)}</Text>
-                  <CurrencyLogo size="20px" style={{ marginLeft: '8px' }} currency={currency1} />
-                </RowFixed>
-              ) : (
-                '-'
-              )}
-            </FixedHeightRow>
-            <FixedHeightRow>
-              <Text>Your pool tokens:</Text>
-              <Text>{userPoolBalance ? userPoolBalance.toSignificant(4) : '-'}</Text>
-            </FixedHeightRow>
-            <FixedHeightRow>
-              <Text>Your pool share:</Text>
-              <Text>{poolTokenPercentage ? `${poolTokenPercentage.toFixed(2)}%` : '-'}</Text>
-            </FixedHeightRow>
+      <Box pr={{ md: 2.5 }} mb={{ xs: 3, md: 0 }} mr="auto">
+        <Typography variant="caption" className="d-block" color="text.disabled" mb={0.5}>
+          Pooled
+        </Typography>
 
-            <RowBetween marginTop="10px">
-              <Button
-                as={Link}
-                to={`/liquidity/add/${currencyId(currency0)}/${currencyId(currency1)}`}
-                style={{ width: '48%' }}
-              >
-                Add
-              </Button>
-              <Button
-                as={Link}
-                style={{ width: '48%' }}
-                to={`/liquidity/remove/${currencyId(currency0)}/${currencyId(currency1)}`}
-              >
-                Remove
-              </Button>
-            </RowBetween>
-          </AutoColumn>
-        )}
-      </AutoColumn>
-    </HoverCard>
+        <div className="flex mb-1">
+          <CustomChip label={currency0.symbol} size="small" />
+          <Typography fontWeight={500} width="140px">
+            {token0Deposited ? token0Deposited?.toSignificant(6) : '-'}
+          </Typography>
+        </div>
+
+        <div className="flex">
+          <CustomChip label={currency1.symbol} size="small" />
+          <Typography fontWeight={500} width="140px">
+            {token1Deposited ? token1Deposited?.toSignificant(6) : '-'}
+          </Typography>
+        </div>
+      </Box>
+
+      {/* <div>
+        <Text>Your pool share:</Text>
+        <Text>{poolTokenPercentage ? `${poolTokenPercentage.toFixed(2)}%` : '-'}</Text>
+      </div> */}
+
+      <div>
+        <Button
+          variant="outlined"
+          component={Link}
+          sx={{
+            color: theme.palette.text.secondary,
+            borderColor: '#e0e0e0',
+            width: { xs: '100%', md: '100px' },
+            height: { xs: '48px', md: '40px' },
+          }}
+          to={`/liquidity/remove/${currencyId(currency0)}/${currencyId(currency1)}`}
+        >
+          Select
+        </Button>
+      </div>
+    </Box>
   )
 }
