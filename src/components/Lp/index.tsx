@@ -13,7 +13,7 @@ const Wrapper = styled.div<{ margin: boolean; sizeraw: number }>`
 
 interface LpProps {
   size: number
-  lpSymbols: Currency[]
+  lpSymbols: Currency[] 
   margin?: boolean
 }
 

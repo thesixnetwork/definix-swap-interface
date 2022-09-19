@@ -1,78 +1,56 @@
+import React, { useCallback, useEffect, useMemo, useState } from 'react'
 import { Currency, Pair } from 'definixswap-sdk'
-import React, { useCallback, useState } from 'react'
+import BigNumber from 'bignumber.js'
 import styled from 'styled-components'
-import { ChevronDownIcon, Text, useMatchBreakpoints } from 'uikit-dev'
+import { Text, Flex, Box, SmallDownIcon, Noti, NotiType } from '@fingerlabs/definixswap-uikit-v2'
+import { Input as NumericalInput } from 'uikitV2/components/NumericalInput'
+import { useActiveWeb3React } from 'hooks'
+import { mediaQueries } from 'uikitV2/base'
+import { useModal } from 'uikit-dev'
 import AnountButton from 'uikit-dev/components/AnountButton'
-import { useActiveWeb3React } from '../../hooks'
-import { useCurrencyBalance } from '../../state/wallet/hooks'
-import { TranslateString } from '../../utils/translateTextHelpers'
-import CurrencyLogo from '../CurrencyLogo'
-import DoubleCurrencyLogo from '../DoubleLogo'
-import { Input as NumericalInput } from '../NumericalInput'
+import Lp from 'components/Lp'
+import Coin from 'uikitV2/components/Coin'
+import { textStyle } from 'uikitV2/text'
 import CurrencySearchModal from '../SearchModal/CurrencySearchModal'
-import TranslatedText from '../TranslatedText'
+import { useCurrencyBalance } from '../../state/wallet/hooks'
 
-const Container = styled.div<{ hideInput: boolean }>``
-
-const InputBox = styled.div`
-  display: flex;
-  flex-flow: row nowrap;
-  flex-wrap: wrap;
-  align-items: center;
-  justify-content: flex-end;
-  padding: 0.5rem 0.5rem 0.5rem 1rem;
-  background: ${({ theme }) => theme.colors.backgroundBox};
-  border-radius: ${({ theme }) => theme.radii.default};
-  border: 1px solid ${({ theme }) => theme.colors.border};
-`
-const CurrencySelect = styled.button<{ selected: boolean }>`
-  align-items: center;
-  height: 32px;
-  font-size: 16px;
-  font-weight: 500;
-  background-color: transparent;
-  color: ${({ selected, theme }) => (selected ? theme.colors.text : '#FFFFFF')};
-  border-radius: ${({ theme }) => theme.radii.default};
-  outline: none;
-  cursor: pointer;
-  user-select: none;
-  border: none;
-  padding: 0 0.5rem;
-
-  :focus,
-  :hover {
-    background-color: ${({ theme }) => theme.colors.tertiary};
-  }
-`
-const Aligner = styled.span`
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-`
 interface CurrencyInputPanelProps {
+  isMobile: boolean
   value: string
-  showMaxButton: boolean
-  label?: string
-  currency?: Currency | null
+  currency?: Currency
   disableCurrencySelect?: boolean
   hideBalance?: boolean
   pair?: Pair | null
   hideInput?: boolean
   otherCurrency?: Currency | null
   id: string
-  showCommonBases?: boolean
-  className?: string
   onMax?: () => void
   onQuarter?: () => void
   onHalf?: () => void
   onUserInput: (value: string) => void
-  onCurrencySelect?: (currency: Currency) => void
+  onCurrencySelect: (currency: Currency) => void
+  isInsufficientBalance?: boolean
+  maxTokenAmount?: string
 }
 
-export default function CurrencyInputPanel({
+const CurrencySelect = styled.button<{ selected: boolean }>`
+  padding: 0;
+  align-items: center;
+  background-color: transparent;
+  outline: none;
+  cursor: pointer;
+  user-select: none;
+  border: none;
+  height: 100px;
+
+  ${mediaQueries.mobile} {
+    height: 90px;
+  }
+`
+
+const CurrencyInputPanel = ({
+  isMobile,
   value,
-  showMaxButton,
-  label = TranslateString(132, 'Input'),
   currency,
   disableCurrencySelect = false,
   hideBalance = false,
@@ -80,108 +58,150 @@ export default function CurrencyInputPanel({
   hideInput = false,
   otherCurrency,
   id,
-  showCommonBases,
-  className,
   onMax,
   onQuarter,
   onHalf,
   onUserInput,
   onCurrencySelect,
-}: CurrencyInputPanelProps) {
-  const [modalOpen, setModalOpen] = useState(false)
+  isInsufficientBalance,
+  maxTokenAmount,
+}: CurrencyInputPanelProps) => {
+  // const { account } = useWallet()
   const { account } = useActiveWeb3React()
   const selectedCurrencyBalance = useCurrencyBalance(account ?? undefined, currency ?? undefined)
-  const { isXl, isMd, isLg } = useMatchBreakpoints()
-  const isMobile = !isXl && !isMd && !isLg
+  const [isMaxKlayNoti, setIsMaxKlayNoti] = useState<boolean>(false)
+  const [balance, setBalance] = useState<string>('')
 
-  const handleDismissSearch = useCallback(() => {
-    setModalOpen(false)
-  }, [setModalOpen])
+  const [onPresentCurrencySearchModal] = useModal(
+    <CurrencySearchModal
+      onCurrencySelect={onCurrencySelect}
+      selectedCurrency={currency}
+      otherSelectedCurrency={otherCurrency}
+    />,
+    false
+  )
+
+  const decimals = useMemo(() => 18, [])
+  const overDp = useMemo(() => new BigNumber(value).decimalPlaces() > decimals, [value, decimals])
+
+  const renderNoti = useCallback(() => {
+    if (overDp) {
+      return (
+        <Noti type={NotiType.ALERT} mt="12px">
+          The value entered is out of the valid range
+        </Noti>
+      )
+    }
+    if (isInsufficientBalance) {
+      return (
+        <Noti type={NotiType.ALERT} mt="12px">
+          Insufficient balance
+        </Noti>
+      )
+    }
+    if (isMaxKlayNoti) {
+      return (
+        <Noti type={NotiType.ALERT} mt="12px">
+          Full payment of KLAY
+        </Noti>
+      )
+    }
+    return null
+  }, [isInsufficientBalance, isMaxKlayNoti, overDp])
+
+  useEffect(() => {
+    if (!hideBalance && !!currency && selectedCurrencyBalance) {
+      setBalance(selectedCurrencyBalance?.toFixed(5))
+      return
+    }
+    setBalance('-')
+  }, [hideBalance, currency, selectedCurrencyBalance])
+
+  useEffect(() => {
+    if (currency?.symbol === 'KLAY') {
+      if (Number(value) >= Number(balance)) {
+        setIsMaxKlayNoti(true)
+        return
+      }
+    }
+    setIsMaxKlayNoti(false)
+  }, [value, balance, maxTokenAmount, currency?.symbol])
 
   return (
     <>
-      <Container id={id} hideInput={hideInput} className={className}>
-        {!hideInput && (
-          <div className="flex justify-space-between mb-1">
-            <Text fontSize="14px" color="textSubtle">
-              {label}
-            </Text>
-            {account && (
-              <Text fontSize="14px" color="textSubtle">
-                Balance:{' '}
-                {!hideBalance && !!currency && selectedCurrencyBalance
-                  ? selectedCurrencyBalance?.toSignificant(6)
-                  : ' -'}
-              </Text>
-            )}
-          </div>
-        )}
-
-        <InputBox style={hideInput ? { padding: '0', borderRadius: '8px' } : {}}>
+      <Box id={id} mb="12px">
+        <Flex justifyContent="space-between">
           {!hideInput && (
-            <>
-              <NumericalInput
-                className="token-amount-input"
-                value={value}
-                onUserInput={(val) => {
-                  onUserInput(val)
-                }}
-                style={{ width: isMobile && currency && showMaxButton && label ? '100%' : 'auto' }}
-              />
-              {account && currency && showMaxButton && label !== 'To' && (
-                <div className="flex align-center justify-end" style={{ width: isMobile ? '100%' : 'auto' }}>
-                  <AnountButton title="25%" onClick={onQuarter} />
-                  <AnountButton title="50%" onClick={onHalf} />
-                  <AnountButton title="MAX" onClick={onMax} />
-                </div>
-              )}
-            </>
+            <Flex flexDirection="row" flex="1 1 0" pr="20px">
+              <Flex flexDirection="column" flex="1" position="relative">
+                <Flex mb="4px">
+                  <Text style={textStyle.R_14R} color="#666" mr="4px">
+                    Balance
+                  </Text>
+                  <Text style={textStyle.R_14B} color="#666">
+                    {balance}
+                  </Text>
+                </Flex>
+                <NumericalInput value={value} onUserInput={(val) => onUserInput(val)} />
+                {account && currency && onQuarter && onHalf && onMax && (
+                  <>
+                    <Flex mt="8px">
+                      <AnountButton title="25%" onClick={onQuarter} />
+                      <AnountButton title="50%" onClick={onHalf} />
+                      <AnountButton title="MAX" onClick={onMax} />
+                    </Flex>
+                    {renderNoti()}
+                  </>
+                )}
+              </Flex>
+            </Flex>
           )}
+
           <CurrencySelect
             selected={!!currency}
             className="open-currency-select-button"
             onClick={() => {
               if (!disableCurrencySelect) {
-                setModalOpen(true)
+                onPresentCurrencySearchModal()
               }
             }}
           >
-            <Aligner>
-              {pair ? (
-                <DoubleCurrencyLogo currency0={pair.token0} currency1={pair.token1} size={16} margin />
-              ) : currency ? (
-                <CurrencyLogo currency={currency} size="24px" style={{ marginRight: '8px' }} />
-              ) : null}
-              {pair ? (
-                <Text>
-                  {pair?.token0.symbol}:{pair?.token1.symbol}
-                </Text>
-              ) : (
-                <Text>
-                  {(currency && currency.symbol && currency.symbol.length > 20
-                    ? `${currency.symbol.slice(0, 4)}...${currency.symbol.slice(
-                        currency.symbol.length - 5,
-                        currency.symbol.length
-                      )}`
-                    : currency?.symbol) || <TranslatedText translationId={82}>Select Token</TranslatedText>}
-                </Text>
-              )}
-              {!disableCurrencySelect && <ChevronDownIcon />}
-            </Aligner>
+            <Flex>
+              <Flex alignItems="center" height={isMobile ? '32px' : '40px'} mr="6px">
+                <Flex>{!disableCurrencySelect && <SmallDownIcon />}</Flex>
+              </Flex>
+              <Flex flexDirection="column" alignItems="center">
+                <Flex mb="5px">
+                  {pair && <Lp lpSymbols={[pair.token0, pair.token1]} size={16} />}
+                  {!pair && currency && <Coin symbol={currency?.symbol} size={isMobile ? 32 : 40} />}
+                  {!pair && !currency && <Coin symbol="UNSELECT" size={isMobile ? 32 : 40} />}
+                </Flex>
+                {pair && (
+                  <Text style={isMobile ? textStyle.R_12B : textStyle.R_14B} color="#222">
+                    {pair?.token0.symbol}:{pair?.token1.symbol}
+                  </Text>
+                )}
+                {!pair && (
+                  <Text style={textStyle.R_14B} color="#222">
+                    {(currency && currency.symbol && currency.symbol.length > 20
+                      ? `${currency.symbol.slice(0, 4)}...${currency.symbol.slice(
+                          currency.symbol.length - 5,
+                          currency.symbol.length
+                        )}`
+                      : currency?.symbol) || (
+                      <Text style={textStyle.R_14B} color="#222">
+                        Token
+                      </Text>
+                    )}
+                  </Text>
+                )}
+              </Flex>
+            </Flex>
           </CurrencySelect>
-        </InputBox>
-      </Container>
-
-      {!disableCurrencySelect && onCurrencySelect && (
-        <CurrencySearchModal
-          // isOpen={modalOpen}
-          onDismiss={handleDismissSearch}
-          onCurrencySelect={onCurrencySelect}
-          selectedCurrency={currency}
-          otherSelectedCurrency={otherCurrency}
-          showCommonBases={showCommonBases}
-        />
-      )}
+        </Flex>
+      </Box>
     </>
   )
 }
+
+export default CurrencyInputPanel
