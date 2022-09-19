@@ -267,7 +267,7 @@ export const PINNED_PAIRS = {
     [
       new Token(intMainnetId, BTCB_ADDRESS[intMainnetId], 18, 'BTCB', 'BTCB Token'),
       new Token(intMainnetId, ETH_ADDRESS[intMainnetId], 18, 'ETH', 'ETH Token')
-    ]
+    ],
     [
       new Token(intMainnetId, VELO_ADDRESS[ChainId.MAINNET], 5, 'VELO', 'VELO Token'),
       new Token(intMainnetId, WBNB_ADDRESS[ChainId.MAINNET], 18, 'WBNB', 'Wrapped BNB')
@@ -341,18 +341,18 @@ export const PINNED_PAIRS = {
     [
       new Token(intTestnetId, USDT_ADDRESS[intTestnetId], 18, 'USDT', 'USDT Token'),
       new Token(intTestnetId, BTCB_ADDRESS[intTestnetId], 18, 'BTCB', 'BTCB Token')
-    ]
-    [
-      new Token(intTestnetId, VELO_ADDRESS[ChainId.BSCTESTNET], 18, 'VELO', 'VELO Token'),
-      new Token(intTestnetId, WBNB_ADDRESS[ChainId.BSCTESTNET], 18, 'WBNB', 'Wrapped BNB')
     ],
     [
-      new Token(intTestnetId, VELO_ADDRESS[ChainId.BSCTESTNET], 18, 'VELO', 'VELO Token'),
-      new Token(intTestnetId, BUSD_ADDRESS[ChainId.BSCTESTNET], 18, 'BUSD', 'BUSD BNB'),
+      new Token(intTestnetId, VELO_ADDRESS[intTestnetId], 18, 'VELO', 'VELO Token'),
+      new Token(intTestnetId, WBNB_ADDRESS[intTestnetId], 18, 'WBNB', 'Wrapped BNB')
     ],
     [
-      new Token(intTestnetId, VELO_ADDRESS[ChainId.BSCTESTNET], 18, 'VELO', 'VELO Token'),
-      new Token(intTestnetId, FINIX_ADDRESS[ChainId.BSCTESTNET], 18, 'FINIX', 'FINIX Token'),
+      new Token(intTestnetId, VELO_ADDRESS[intTestnetId], 18, 'VELO', 'VELO Token'),
+      new Token(intTestnetId, BUSD_ADDRESS[intTestnetId], 18, 'BUSD', 'BUSD BNB'),
+    ],
+    [
+      new Token(intTestnetId, VELO_ADDRESS[intTestnetId], 18, 'VELO', 'VELO Token'),
+      new Token(intTestnetId, FINIX_ADDRESS[intTestnetId], 18, 'FINIX', 'FINIX Token'),
     ],
   ]
 }
