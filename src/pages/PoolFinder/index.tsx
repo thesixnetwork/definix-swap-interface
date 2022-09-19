@@ -1,28 +1,20 @@
-import { BorderCard } from 'components/Card'
-import { AutoColumn, ColumnCenter } from 'components/Column'
-import CurrencyLogo from 'components/CurrencyLogo'
-import { FindPoolTabs } from 'components/NavigationTabs'
+import { ErrorRounded } from '@mui/icons-material'
+import { Button as ButtonMUI, Typography } from '@mui/material'
 import { MinimalPositionCard } from 'components/PositionCard'
-import CurrencySearchModal from 'components/SearchModal/CurrencySearchModal'
-import { StyledInternalLink } from 'components/Shared'
-import { Dots } from 'components/swap/styleds'
-import TranslatedText from 'components/TranslatedText'
 import { PairState, usePair } from 'data/Reserves'
 import { Currency, ETHER, JSBI, TokenAmount } from 'definixswap-sdk'
 import { useActiveWeb3React } from 'hooks'
 import React, { useCallback, useEffect, useState } from 'react'
+import { useHistory } from 'react-router-dom'
 import { usePairAdder } from 'state/user/hooks'
 import { useTokenBalance } from 'state/wallet/hooks'
-import SmallestLayout from 'uikitV2/components/SmallestLayout'
-import PageTitle from 'uikitV2/components/PageTitle'
+import { ArrowBackIcon, Button, CardBody, Flex, Text, useMatchBreakpoints } from 'uikit-dev'
 import Card from 'uikitV2/components/Card'
-import { Button as ButtonMUI } from '@mui/material'
-import { Noti } from '@fingerlabs/definixswap-uikit-v2'
-import { ArrowBackIcon, AddIcon, Button, CardBody, ChevronDownIcon, Text, Flex, useMatchBreakpoints } from 'uikit-dev'
-import { currencyId } from 'utils/currencyId'
 import { ChangePlusIcon } from 'uikitV2/components/Icon'
-import { useHistory } from 'react-router-dom'
+import PageTitle from 'uikitV2/components/PageTitle'
+import SmallestLayout from 'uikitV2/components/SmallestLayout'
 import { textStyle } from 'uikitV2/text'
+import { currencyId } from 'utils/currencyId'
 import SelectCurrencyPanel from './SelectCurrencyPanel'
 
 enum Fields {
@@ -127,7 +119,7 @@ export default function PoolFinder() {
   return (
     <SmallestLayout>
       <Flex flexDirection="column" width={isMobile ? '100%' : '629px'} mb="40px">
-        <Flex mb="20px" onClick={() => history.replace('/liquidity/add')} style={{ cursor: 'pointer' }}>
+        <Flex mb="20px" onClick={() => history.replace('/liquidity/list')} style={{ cursor: 'pointer' }}>
           <ArrowBackIcon color="#999" />
           <Text
             ml="6px"
@@ -141,6 +133,7 @@ export default function PoolFinder() {
         <PageTitle
           title="Import Pool"
           caption="Use this tool to find pairs that don’t automatically appear in the interface."
+          sx={{ p: 0 }}
         />
       </Flex>
 
@@ -155,9 +148,10 @@ export default function PoolFinder() {
           <SelectCurrencyPanel currency={currency1} onCurrencySelect={handleCurrency1} />
 
           {(!currency0 || !currency1) && (
-            <Noti type="guide" mt="12px">
+            <Typography color="text.disabled" fontWeight={500} mt={1.5} display="flex" variant="caption">
+              <ErrorRounded sx={{ fontSize: '0.875rem', color: 'text.disabled', mr: 1 }} />
               Select a token to find your liquidity.
-            </Noti>
+            </Typography>
           )}
 
           {currency0 && currency1 && (
