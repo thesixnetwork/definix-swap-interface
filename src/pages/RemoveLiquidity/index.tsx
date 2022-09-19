@@ -25,7 +25,7 @@ import { ArrowDown, Plus } from 'react-feather'
 import { RouteComponentProps } from 'react-router'
 import { useTokenBalance } from 'state/wallet/hooks'
 import { ThemeContext } from 'styled-components'
-import { ArrowBackIcon, CardBody, Flex, Text } from 'uikit-dev'
+import { ArrowBackIcon, CardBody, Flex, Text, useModal } from 'uikit-dev'
 import { LeftPanel, MaxWidthLeft } from 'uikit-dev/components/TwoPanelLayout'
 import Card from 'uikitV2/components/Card'
 import Coin from 'uikitV2/components/Coin'
@@ -57,6 +57,7 @@ import useDebouncedChangeHandler from '../../utils/useDebouncedChangeHandler'
 import { wrappedCurrency } from '../../utils/wrappedCurrency'
 import AppBody from '../AppBody'
 import { ClickableText, Wrapper } from '../Pool/styleds'
+import ConfirmRemoveModal from './ConfirmRemoveModal'
 
 export default function RemoveLiquidity({
   history,
@@ -517,6 +518,27 @@ export default function RemoveLiquidity({
     liquidityPercentChangeCallback
   )
 
+  const handleDismissConfirmation = useCallback(() => {
+    setSignatureData(null) // important that we clear signature data to avoid bad sigs
+    // if there was a tx hash, we want to clear the input
+    onUserInput(Field.LIQUIDITY_PERCENT, '0')
+  }, [onUserInput])
+
+  const [onPresentConfirmRemoveModal] = useModal(
+    <ConfirmRemoveModal
+      currencyA={currencyA}
+      currencyB={currencyB}
+      parsedAmounts={parsedAmounts}
+      pair={pair}
+      tokenA={tokenA}
+      tokenB={tokenB}
+      signatureData={signatureData}
+      onDismissModal={handleDismissConfirmation}
+      onUserInput={onUserInput}
+      successTxCallback={() => history.replace('/liquidity/list')}
+    />
+  )
+
   return (
     <SmallestLayout>
       <Flex flexDirection="column" width={isMobile ? '100%' : '629px'} mb="40px">
@@ -777,7 +799,7 @@ export default function RemoveLiquidity({
 
                   <Button
                     onClick={() => {
-                      // onPresentConfirmRemoveModal()
+                      onPresentConfirmRemoveModal()
                     }}
                     disabled={!isValid || (signatureData === null && approval !== ApprovalState.APPROVED)}
                     // scale={ButtonScales.LG}
