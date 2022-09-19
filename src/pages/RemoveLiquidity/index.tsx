@@ -541,7 +541,7 @@ export default function RemoveLiquidity({
 
   return (
     <SmallestLayout>
-      <Flex flexDirection="column" width={isMobile ? '100%' : '629px'} mb="40px">
+      <Flex flexDirection="column" width={isMobile ? '100%' : '629px'}>
         <Flex mb="20px" onClick={() => history.replace('/liquidity/list')} style={{ cursor: 'pointer' }}>
           <ArrowBackIcon />
           <Text
