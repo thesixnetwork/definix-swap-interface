@@ -71,6 +71,16 @@ export const ADA_ADDRESS = {
   [intTestnetId]: process.env.REACT_APP_ADA_ADDRESS_TESTNET || ''
 }
 
+export const VELO_ADDRESS = {
+  [intMainnetId]: process.env.REACT_APP_VELO_ADDRESS_MAINNET || '',
+  [intTestnetId]: process.env.REACT_APP_VELO_ADDRESS_TESTNET || ''
+}
+
+export const FINIX_SIX_LP = {
+  [intMainnetId]: process.env.REACT_APP_FINIX_SIX_LP_MAINNET || '',
+  [intTestnetId]: process.env.REACT_APP_FINIX_SIX_LP_TESTNET || ''
+}
+
 export const allTokens = {
   SIX: SIX_ADDRESS,
   FINIX: FINIX_ADDRESS,
@@ -258,6 +268,18 @@ export const PINNED_PAIRS = {
       new Token(intMainnetId, BTCB_ADDRESS[intMainnetId], 18, 'BTCB', 'BTCB Token'),
       new Token(intMainnetId, ETH_ADDRESS[intMainnetId], 18, 'ETH', 'ETH Token')
     ]
+    [
+      new Token(intMainnetId, VELO_ADDRESS[ChainId.MAINNET], 5, 'VELO', 'VELO Token'),
+      new Token(intMainnetId, WBNB_ADDRESS[ChainId.MAINNET], 18, 'WBNB', 'Wrapped BNB')
+    ],
+    [
+      new Token(intMainnetId, VELO_ADDRESS[ChainId.MAINNET], 5, 'VELO', 'VELO Token'),
+      new Token(intMainnetId, BUSD_ADDRESS[ChainId.MAINNET], 18, 'BUSD', 'BUSD BNB'),
+    ],
+    [
+      new Token(intMainnetId, VELO_ADDRESS[ChainId.MAINNET], 5, 'VELO', 'VELO Token'),
+      new Token(intMainnetId, FINIX_ADDRESS[ChainId.MAINNET], 18, 'FINIX', 'FINIX Token'),
+    ],
   ],
   [intTestnetId]: [
     [
@@ -320,6 +342,18 @@ export const PINNED_PAIRS = {
       new Token(intTestnetId, USDT_ADDRESS[intTestnetId], 18, 'USDT', 'USDT Token'),
       new Token(intTestnetId, BTCB_ADDRESS[intTestnetId], 18, 'BTCB', 'BTCB Token')
     ]
+    [
+      new Token(intTestnetId, VELO_ADDRESS[ChainId.BSCTESTNET], 18, 'VELO', 'VELO Token'),
+      new Token(intTestnetId, WBNB_ADDRESS[ChainId.BSCTESTNET], 18, 'WBNB', 'Wrapped BNB')
+    ],
+    [
+      new Token(intTestnetId, VELO_ADDRESS[ChainId.BSCTESTNET], 18, 'VELO', 'VELO Token'),
+      new Token(intTestnetId, BUSD_ADDRESS[ChainId.BSCTESTNET], 18, 'BUSD', 'BUSD BNB'),
+    ],
+    [
+      new Token(intTestnetId, VELO_ADDRESS[ChainId.BSCTESTNET], 18, 'VELO', 'VELO Token'),
+      new Token(intTestnetId, FINIX_ADDRESS[ChainId.BSCTESTNET], 18, 'FINIX', 'FINIX Token'),
+    ],
   ]
 }
 

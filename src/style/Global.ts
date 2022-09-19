@@ -1,12 +1,12 @@
 import { createGlobalStyle } from 'styled-components'
 
 const GlobalStyle = createGlobalStyle`
-  @import url('https://fonts.googleapis.com/css2?family=Prompt:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap');
+  @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap');
 
   body {
-    background-color: ${({ theme }) => theme.colors.backgroundGray};
-    font-family: 'Prompt',sans-serif;
-    -webkit-font-smoothing: antialiased;
+    background-color: white;
+    font-family: 'Roboto', 'Noto Sans KR', sans-serif;
+    -webkit-font-smoothing: auto;
     -moz-osx-font-smoothing: grayscale;
     color: #404041;
     font-weight: 500;
@@ -89,6 +89,8 @@ const GlobalStyle = createGlobalStyle`
     }
   }
 
+  .d-block { display: block !important; }
+
   .flex {
     display: flex !important;
   
@@ -119,25 +121,28 @@ const GlobalStyle = createGlobalStyle`
   
     .flex-grow { flex-grow: 1; }
     .flex-shrink { flex-shrink: 0; }
-    .col-12 { width: 100%; }
-    .col-9 { width: 75%; }
-    .col-8 { width: 66.666%; }
-    .col-7 { width: 60%; }
-    .col-6 { width: 50%; }
-    .col-5 { width: 40%; }
-    .col-4 { width: 33.333%; }
+
+    .col-1 { width: 8.33%; }
+    .col-2 { width: 16.66%; }
     .col-3 { width: 25%; }
+    .col-4 { width: 33.33%; }
+    .col-5 { width: 41.66%; }
+    .col-6 { width: 50%; }
+    .col-7 { width: 58.33%; }
+    .col-8 { width: 66.66%; }
+    .col-9 { width: 75%; }
+    .col-10 { width: 83.33%; }
+    .col-11 { width: 91.66%; }
+    .col-12 { width: 100%; }
   }
 
-  .bd { border: 1px solid ${({ theme }) => theme.colors.border}; }
-  .bd-t { border-top: 1px solid ${({ theme }) => theme.colors.border}; }
-  .bd-r { border-right: 1px solid ${({ theme }) => theme.colors.border}; }
-  .bd-b { border-bottom: 1px solid ${({ theme }) => theme.colors.border}; }
-  .bd-l { border-left: 1px solid ${({ theme }) => theme.colors.border}; }
-  .bd-x { border-right: 1px solid ${({ theme }) => theme.colors.border}; border-left: 1px solid ${({ theme }) =>
-  theme.colors.border}; }
-  .bd-y { border-top: 1px solid ${({ theme }) => theme.colors.border}; border-bottom: 1px solid ${({ theme }) =>
-  theme.colors.border}; }
+  .bd { border: 1px solid rgba(224, 224, 224, 0.5); }
+  .bd-t { border-top: 1px solid rgba(224, 224, 224, 0.5); }
+  .bd-r { border-right: 1px solid rgba(224, 224, 224, 0.5); }
+  .bd-b { border-bottom: 1px solid rgba(224, 224, 224, 0.5); }
+  .bd-l { border-left: 1px solid rgba(224, 224, 224, 0.5); }
+  .bd-x { border-right: 1px solid rgba(224, 224, 224, 0.5); border-left: 1px solid rgba(224, 224, 224, 0.5); }
+  .bd-y { border-top: 1px solid rgba(224, 224, 224, 0.5); border-bottom: 1px solid rgba(224, 224, 224, 0.5); }
   .bd-t-n { border-top: none !important; }
   .bd-r-n { border-right: none !important; }
   .bd-b-n { border-bottom: none !important; }
@@ -228,6 +233,10 @@ const GlobalStyle = createGlobalStyle`
   .mt-9 {
     margin-top: 6rem !important;
   }
+
+  .mt-auto {
+    margin-top: auto !important;
+  }
   
   .mb-0 {
     margin-bottom: 0 !important;
@@ -308,6 +317,10 @@ const GlobalStyle = createGlobalStyle`
   .ml-9 {
     margin-left: 6rem !important;
   }
+
+  .ml-auto {
+    margin-left: auto !important;
+  }
   
   .mr-0 {
     margin-right: 0 !important;
@@ -347,6 +360,10 @@ const GlobalStyle = createGlobalStyle`
   
   .mr-9 {
     margin-right: 6rem !important;
+  }
+
+  .mr-auto {
+    margin-right: auto !important;
   }
   
   .mx-0 {

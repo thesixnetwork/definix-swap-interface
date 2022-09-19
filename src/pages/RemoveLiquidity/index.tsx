@@ -413,9 +413,9 @@ export default function RemoveLiquidity({
   const handleSelectCurrencyA = useCallback(
     (currency: Currency) => {
       if (currencyIdB && currencyId(currency) === currencyIdB) {
-        history.push(`/remove/${currencyId(currency)}/${currencyIdA}`)
+        history.push(`/liquidity/remove/${currencyId(currency)}/${currencyIdA}`)
       } else {
-        history.push(`/remove/${currencyId(currency)}/${currencyIdB}`)
+        history.push(`/liquidity/remove/${currencyId(currency)}/${currencyIdB}`)
       }
     },
     [currencyIdA, currencyIdB, history]
@@ -423,9 +423,9 @@ export default function RemoveLiquidity({
   const handleSelectCurrencyB = useCallback(
     (currency: Currency) => {
       if (currencyIdA && currencyId(currency) === currencyIdA) {
-        history.push(`/remove/${currencyIdB}/${currencyId(currency)}`)
+        history.push(`/liquidity/remove/${currencyIdB}/${currencyId(currency)}`)
       } else {
-        history.push(`/remove/${currencyIdA}/${currencyId(currency)}`)
+        history.push(`/liquidity/remove/${currencyIdA}/${currencyId(currency)}`)
       }
     },
     [currencyIdA, currencyIdB, history]
@@ -446,7 +446,7 @@ export default function RemoveLiquidity({
     () => (
       <TransactionSubmittedContent
         title="Remove Liquidity Complete"
-        date={`${new Date().toDateString()}, ${new Date().toTimeString().split(" ")[0]}`}
+        date={`${new Date().toDateString()}, ${new Date().toTimeString().split(' ')[0]}`}
         chainId={chainId}
         hash={txHash}
         content={modalHeader}
@@ -470,7 +470,7 @@ export default function RemoveLiquidity({
     () => (
       <TransactionErrorContent
         title="Remove Liquidity Failed"
-        date={`${new Date().toDateString()}, ${new Date().toTimeString().split(" ")[0]}`}
+        date={`${new Date().toDateString()}, ${new Date().toTimeString().split(' ')[0]}`}
         chainId={chainId}
         hash={txHash}
         content={modalHeader}
@@ -590,15 +590,15 @@ export default function RemoveLiquidity({
                             <RowBetween style={{ justifyContent: 'flex-end' }}>
                               {oneCurrencyIsETH ? (
                                 <StyledInternalLink
-                                  to={`/remove/${currencyA === ETHER ? WETH(chainId).address : currencyIdA}/${currencyB === ETHER ? WETH(chainId).address : currencyIdB
+                                  to={`/liquidity/remove/${currencyA === ETHER ? WETH(chainId).address : currencyIdA}/${currencyB === ETHER ? WETH(chainId).address : currencyIdB
                                     }`}
                                 >
                                   Receive WBNB
                                 </StyledInternalLink>
                               ) : oneCurrencyIsWETH ? (
                                 <StyledInternalLink
-                                  to={`/remove/${currencyA && currencyEquals(currencyA, WETH(chainId)) ? 'KLAY' : currencyIdA
-                                    }/${currencyB && currencyEquals(currencyB, WETH(chainId)) ? 'KLAY' : currencyIdB}`}
+                                  to={`/liquidity/remove/${currencyA && currencyEquals(currencyA, WETH(chainId)) ? 'ETH' : currencyIdA
+                                    }/${currencyB && currencyEquals(currencyB, WETH(chainId)) ? 'ETH' : currencyIdB}`}
                                 >
                                   Receive BNB
                                 </StyledInternalLink>

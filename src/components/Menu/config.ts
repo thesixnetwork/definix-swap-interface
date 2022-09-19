@@ -1,21 +1,18 @@
 import { MenuEntry } from 'uikit-dev'
-import newIcon from 'uikit-dev/images/for-trading-challenge/New-icon.png'
-import bridgeBlack from 'uikit-dev/images/for-ui-v2/menu/Bridge-Black.png'
 import bridgeWhite from 'uikit-dev/images/for-ui-v2/menu/Bridge-White.png'
-import farmBlack from 'uikit-dev/images/for-ui-v2/menu/Farm-Black.png'
 import farmWhite from 'uikit-dev/images/for-ui-v2/menu/Farm-White.png'
 import gitbookBlack from 'uikit-dev/images/for-ui-v2/menu/Gitbook-Black.png'
 import gitbookWhite from 'uikit-dev/images/for-ui-v2/menu/Gitbook-White.png'
-import homeBlack from 'uikit-dev/images/for-ui-v2/menu/Home-Black.png'
 import homeWhite from 'uikit-dev/images/for-ui-v2/menu/Home-White.png'
-import liquidityBlack from 'uikit-dev/images/for-ui-v2/menu/Liquidity-Black.png'
-import liquidityWhite from 'uikit-dev/images/for-ui-v2/menu/Liquidity-White.png'
-import mutualBlack from 'uikit-dev/images/for-ui-v2/menu/Mutual-fund-Black.png'
 import mutualWhite from 'uikit-dev/images/for-ui-v2/menu/Mutual-fund-White.png'
 import partnerBlack from 'uikit-dev/images/for-ui-v2/menu/Partnership-Black.png'
 import partnerWhite from 'uikit-dev/images/for-ui-v2/menu/Partnership-White.png'
-import swapBlack from 'uikit-dev/images/for-ui-v2/menu/Swap-Black.png'
 import swapWhite from 'uikit-dev/images/for-ui-v2/menu/Swap-White.png'
+import bridgeBlack from 'uikitV2/images/menu/bridge.svg'
+import swapBlack from 'uikitV2/images/menu/exchange.svg'
+import homeBlack from 'uikitV2/images/menu/home.svg'
+import mutualBlack from 'uikitV2/images/menu/rebalancing.svg'
+import farmBlack from 'uikitV2/images/menu/yield-farming.svg'
 
 const config: MenuEntry[] = [
   {
@@ -33,14 +30,20 @@ const config: MenuEntry[] = [
     href: '/swap',
     notHighlight: false,
     newTab: false,
-  },
-  {
-    label: 'Liquidity',
-    icon: liquidityBlack,
-    iconActive: liquidityWhite,
-    href: '/liquidity',
-    notHighlight: false,
-    newTab: false,
+    items: [
+      {
+        label: 'Swap',
+        href: '/swap',
+        notHighlight: false,
+        newTab: false,
+      },
+      {
+        label: 'Liquidity',
+        href: '/liquidity',
+        notHighlight: false,
+        newTab: false,
+      },
+    ],
   },
   {
     label: 'Yield Farming',
@@ -59,6 +62,12 @@ const config: MenuEntry[] = [
       {
         label: 'Pool',
         href: `${process.env.REACT_APP_FRONTEND_URL}/pool`,
+        notHighlight: false,
+        newTab: false,
+      },
+      {
+        label: 'Partnership Pool',
+        href: `${process.env.REACT_APP_FRONTEND_URL}/partnership-pool`,
         notHighlight: false,
         newTab: false,
       },
@@ -83,6 +92,7 @@ const config: MenuEntry[] = [
   //   notHighlight: false,
   //   newTab: false,
   // },
+
   {
     label: 'Rebalancing',
     icon: mutualBlack,
@@ -91,35 +101,6 @@ const config: MenuEntry[] = [
     notHighlight: false,
     newTab: false,
   },
-  // {
-  //   label: 'Vault',
-  //   icon: mutualBlack,
-  //   iconActive: mutualWhite,
-  //   href: `${process.env.REACT_APP_FRONTEND_URL}/explore`,
-  //   notHighlight: false,
-  //   newTab: false,
-  //   items: [
-  //     {
-  //       label: 'Explore',
-  //       href: `${process.env.REACT_APP_FRONTEND_URL}/explore`,
-  //       notHighlight: false,
-  //       newTab: false,
-  //     },
-  //     // {
-  //     //   label: 'Investors',
-  //     //   href: '/info',
-  //     //   notHighlight: true,
-  //     //   newTab: false,
-  //     // },
-  //     // {
-  //     //   label: 'Fund Managers',
-  //     //   href: '/info',
-  //     //   notHighlight: true,
-  //     //   newTab: false,
-  //     // },
-  //     // {
-  //     //   label: 'Network Monitor',
-  //     //   href: '/info',
   //     //   notHighlight: true,
   //     //   newTab: false,
   //     // },
@@ -153,7 +134,7 @@ const config: MenuEntry[] = [
     label: 'Gitbook',
     icon: gitbookBlack,
     iconActive: gitbookWhite,
-    href: 'https://app.gitbook.com/@sixnetwork/s/definix/',
+    href: 'https://sixnetwork.gitbook.io/definix/',
     notHighlight: true,
     newTab: true,
   },

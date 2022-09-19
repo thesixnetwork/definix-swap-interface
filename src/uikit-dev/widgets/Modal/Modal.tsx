@@ -1,10 +1,12 @@
+import { CloseIcon } from '@fingerlabs/definixswap-uikit-v2'
 import React from 'react'
 import styled from 'styled-components'
 import { Text } from 'uikit-dev/components/Text'
+import { spacing } from 'uikitV2/base'
 import Flex from '../../components/Box/Flex'
 import { Button, IconButton } from '../../components/Button'
 import Heading from '../../components/Heading/Heading'
-import { ArrowBackIcon, CloseIcon } from '../../components/Svg'
+import { ArrowBackIcon } from '../../components/Svg'
 import colorStroke from '../../images/Color-stroke.png'
 import { InjectedProps } from './types'
 
@@ -20,20 +22,27 @@ interface Props extends InjectedProps {
 }
 
 const StyledModal = styled.div<{ isRainbow: boolean }>`
-  background: ${({ theme }) => theme.modal.background};
-  box-shadow: 0px 20px 36px -8px rgba(14, 14, 44, 0.1), 0px 1px 1px rgba(0, 0, 0, 0.05);
-  border-radius: ${({ theme }) => theme.radii.default};
+  flex-direction: column;
+  background: #ffffff;
+  border-radius: ${spacing.S_16}px;
   width: 100%;
-  z-index: ${({ theme }) => theme.zIndices.modal};
+  z-index: 100;
   overflow-y: auto;
+  align-self: center;
+  max-height: 100%;
+
+  // background: ${({ theme }) => theme.modal.background};
+  // box-shadow: 0px 20px 36px -8px rgba(14, 14, 44, 0.1), 0px 1px 1px rgba(0, 0, 0, 0.05);
+  // border-radius: ${({ theme }) => theme.radii.default};
+  // width: 100%;
+  // z-index: ${({ theme }) => theme.zIndices.modal};
+  // overflow-y: auto;
+
   ${({ theme }) => theme.mediaQueries.xs} {
     width: auto;
-    min-width: calc(100% - 24px);
-    max-width: calc(100% - 24px);
+    min-width: 300px;
   }
-  ${({ theme }) => theme.mediaQueries.sm} {
-    min-width: 360px;
-  }
+
   position: relative;
   padding-bottom: ${({ isRainbow }) => (isRainbow ? '4px' : '0')};
 
@@ -67,7 +76,7 @@ const Modal: React.FC<Props> = ({
   children,
   hideCloseButton = false,
   bodyPadding = '24px',
-  isRainbow = true,
+  isRainbow = false,
   classHeader = '',
   maxWidth = '',
   className = '',
@@ -87,7 +96,7 @@ const Modal: React.FC<Props> = ({
 
       {!hideCloseButton && (
         <IconButton variant="text" onClick={onDismiss} aria-label="Close the dialog">
-          <CloseIcon color="primary" />
+          <CloseIcon />
         </IconButton>
       )}
     </ModalHeader>

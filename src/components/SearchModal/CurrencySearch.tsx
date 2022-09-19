@@ -1,29 +1,18 @@
+import { SearchRounded } from '@mui/icons-material'
+import { Box, InputAdornment, OutlinedInput } from '@mui/material'
 import { Currency, ETHER, Token } from 'definixswap-sdk'
-import React, { KeyboardEvent, RefObject, useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react'
+import React, { KeyboardEvent, useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import AutoSizer from 'react-virtualized-auto-sizer'
 import { FixedSizeList } from 'react-window'
 import styled, { ThemeContext } from 'styled-components'
-import { CloseIcon, Heading, IconButton, Text } from 'uikit-dev'
-import searchIcon from '../../assets/svg/search.svg'
 import { useActiveWeb3React } from '../../hooks'
 import { useAllTokens, useToken } from '../../hooks/Tokens'
 import { useSelectedListInfo } from '../../state/lists/hooks'
 import { isAddress } from '../../utils'
-import { TranslateString } from '../../utils/translateTextHelpers'
-import Card from '../Card'
-import Column from '../Column'
-import ListLogo from '../ListLogo'
-import QuestionHelper from '../QuestionHelper'
-import Row, { RowBetween } from '../Row'
-import { LinkStyledButton } from '../Shared'
-import TranslatedText from '../TranslatedText'
-import CommonBases from './CommonBases'
 import CurrencyList from './CurrencyList'
 import { filterTokens } from './filtering'
-import SortButton from './SortButton'
 import { useTokenComparator } from './sorting'
-import { PaddedColumn, SearchInput, Separator } from './styleds'
 
 interface CurrencySearchProps {
   isOpen: boolean
@@ -155,50 +144,23 @@ export function CurrencySearch({
   const selectedListInfo = useSelectedListInfo()
 
   return (
-    <Column style={{ width: '100%', flex: '1 1' }}>
-      <PaddedColumn gap="16px">
-        <RowBetween>
-          <Text>
-            <Heading>
-              <TranslatedText translationId={82}>Select a token</TranslatedText>
-              <QuestionHelper
-                text={TranslateString(
-                  130,
-                  'Find a token by searching for its name or symbol or by pasting its address below.'
-                )}
-              />
-            </Heading>
-          </Text>
-          <IconButton onClick={onDismiss} variant="text">
-            <CloseIcon />
-          </IconButton>
-        </RowBetween>
-        <SearchInputWithIcon>
-          <SearchInput
-            type="text"
-            id="token-search-input"
-            placeholder={t('tokenSearchPlaceholder')}
-            value={searchQuery}
-            ref={inputRef as RefObject<HTMLInputElement>}
-            onChange={handleInput}
-            onKeyDown={handleEnter}
-          />
-          <img src={searchIcon} alt="" />
-        </SearchInputWithIcon>
-        {showCommonBases && (
-          <CommonBases chainId={chainId} onSelect={handleCurrencySelect} selectedCurrency={selectedCurrency} />
-        )}
-        <RowBetween className="pb-2">
-          <Heading>
-            <TranslatedText translationId={126}>Token name</TranslatedText>
-          </Heading>
-          <SortButton ascending={invertSearchOrder} toggleSortOrder={() => setInvertSearchOrder((iso) => !iso)} />
-        </RowBetween>
-      </PaddedColumn>
+    <Box display="flex" flexDirection="column" height="100%">
+      <OutlinedInput
+        fullWidth
+        size="small"
+        value={searchQuery}
+        onChange={handleInput}
+        onKeyDown={handleEnter}
+        placeholder={t('tokenSearchPlaceholder')}
+        endAdornment={
+          <InputAdornment position="end">
+            <SearchRounded />
+          </InputAdornment>
+        }
+        sx={{ fontSize: '0.875rem', color: 'text.secondary' }}
+      />
 
-      <Separator />
-
-      <div style={{ flex: '1' }}>
+      <Box flexGrow={1} pt={2.5}>
         <AutoSizer disableWidth>
           {({ height }) => (
             <CurrencyList
@@ -212,37 +174,8 @@ export function CurrencySearch({
             />
           )}
         </AutoSizer>
-      </div>
-
-      {null && (
-        <>
-          <Separator />
-          <Card>
-            <RowBetween>
-              {selectedListInfo.current ? (
-                <Row>
-                  {selectedListInfo.current.logoURI ? (
-                    <ListLogo
-                      style={{ marginRight: 12 }}
-                      logoURI={selectedListInfo.current.logoURI}
-                      alt={`${selectedListInfo.current.name} list logo`}
-                    />
-                  ) : null}
-                  <Text id="currency-search-selected-list-name">{selectedListInfo.current.name}</Text>
-                </Row>
-              ) : null}
-              <LinkStyledButton
-                style={{ fontWeight: 500, color: theme.colors.textSubtle, fontSize: 16 }}
-                onClick={onChangeList}
-                id="currency-search-change-list-button"
-              >
-                {selectedListInfo.current ? 'Change' : 'Select a list'}
-              </LinkStyledButton>
-            </RowBetween>
-          </Card>
-        </>
-      )}
-    </Column>
+      </Box>
+    </Box>
   )
 }
 

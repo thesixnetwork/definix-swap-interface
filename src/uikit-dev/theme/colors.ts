@@ -4,10 +4,10 @@ import { Colors } from './types'
 
 export const baseColors = {
   failure: '#d42837',
-  primary: '#1587C9',
+  primary: '#ff5532',
   primaryBright: '#59a1ec',
   primaryDark: '#004889',
-  secondary: '#0973B9',
+  secondary: '#5e515f',
   success: '#2A9D8F',
   successAlpha: 'rgba(42,157,143,0.1)',
   warning: '#E5B339',

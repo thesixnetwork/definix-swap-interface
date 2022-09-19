@@ -1,91 +1,79 @@
-import { AutoColumn } from 'components/Column'
-import { Currency, CurrencyAmount, Fraction, Percent } from 'definixswap-sdk'
+import { ErrorRounded } from '@mui/icons-material'
+import { Button, Typography } from '@mui/material'
+import { Currency, CurrencyAmount, Percent, Price } from 'definixswap-sdk'
 import React from 'react'
-import { Button, Text } from 'uikit-dev'
-import CurrencyLogo from '../../components/CurrencyLogo'
-import { RowBetween } from '../../components/Row'
-import { Field } from '../../state/mint/actions'
+import { Field } from 'state/mint/actions'
+import SpaceBetweenFormat from 'uikitV2/components/SpaceBetweenFormat'
+import { PoolPriceBar } from './PoolPriceBar'
 
-export function ConfirmAddModalBottom({
+function ConfirmAddModalBottom({
   noLiquidity,
   price,
   currencies,
   parsedAmounts,
   poolTokenPercentage,
   onAdd,
+  allowedSlippage,
+  isPending,
 }: {
   noLiquidity?: boolean
-  price?: Fraction
+  price?: Price
   currencies: { [field in Field]?: Currency }
   parsedAmounts: { [field in Field]?: CurrencyAmount }
   poolTokenPercentage?: Percent
   onAdd: () => void
+  allowedSlippage: number
+  isPending: boolean
 }) {
   return (
-    <>
-      <AutoColumn gap="16px">
-        <RowBetween>
-          <div className="flex align-center">
-            <CurrencyLogo currency={currencies[Field.CURRENCY_A]} style={{ marginRight: '8px' }} />
-            <div className="flex">
-              <Text className="mr-1" bold>
-                {currencies[Field.CURRENCY_A]?.symbol}
-              </Text>
-              <Text color="textSubtle">Deposited</Text>
-            </div>
-          </div>
-          <div className="flex justify-end">
-            <Text bold className="mr-1">
-              {parsedAmounts[Field.CURRENCY_A]?.toSignificant(6)}
-            </Text>
-            <Text bold>{currencies[Field.CURRENCY_A]?.symbol}</Text>
-          </div>
-        </RowBetween>
+    <div>
+      <Typography fontWeight={500} color="text.secondary" mb={1.5}>
+        Estimated Returns
+      </Typography>
 
-        <RowBetween>
-          <div className="flex align-center">
-            <CurrencyLogo currency={currencies[Field.CURRENCY_B]} style={{ marginRight: '8px' }} />
-            <div className="flex">
-              <Text className="mr-1" bold>
-                {currencies[Field.CURRENCY_B]?.symbol}
-              </Text>
-              <Text color="textSubtle">Deposited</Text>
-            </div>
+      <SpaceBetweenFormat
+        title="Deposited"
+        valueElm={
+          <div>
+            <Typography variant="body2" color="text.secondary" sx={{ textAlign: { md: 'right' } }} fontWeight="500">
+              {parsedAmounts[Field.CURRENCY_A]?.toSignificant(6)} {currencies[Field.CURRENCY_A]?.symbol}
+            </Typography>
+            <Typography variant="body2" color="text.secondary" sx={{ textAlign: { md: 'right' } }} fontWeight="500">
+              {parsedAmounts[Field.CURRENCY_B]?.toSignificant(6)} {currencies[Field.CURRENCY_B]?.symbol}
+            </Typography>
           </div>
-          <div className="flex justify-end">
-            <Text bold className="mr-1">
-              {parsedAmounts[Field.CURRENCY_B]?.toSignificant(6)}
-            </Text>
-            <Text bold>{currencies[Field.CURRENCY_B]?.symbol}</Text>
-          </div>
-        </RowBetween>
+        }
+        sx={{ alignItems: 'flex-start' }}
+        mb={1.5}
+      />
 
-        <RowBetween align="baseline">
-          <Text color="textSubtle">Price Rate</Text>
+      <PoolPriceBar
+        currencies={currencies}
+        poolTokenPercentage={poolTokenPercentage}
+        noLiquidity={noLiquidity}
+        price={price}
+      />
 
-          <div className="flex flex-column align-end">
-            <Text bold>
-              {`1 ${currencies[Field.CURRENCY_A]?.symbol} = ${price?.toSignificant(4)} ${
-                currencies[Field.CURRENCY_B]?.symbol
-              }`}
-            </Text>
-            <Text bold>
-              {`1 ${currencies[Field.CURRENCY_B]?.symbol} = ${price?.invert().toSignificant(4)} ${
-                currencies[Field.CURRENCY_A]?.symbol
-              }`}
-            </Text>
-          </div>
-        </RowBetween>
+      {!noLiquidity && (
+        <Typography variant="caption" color="text.disabled" display="flex" mt={2.5}>
+          <ErrorRounded sx={{ fontSize: '0.875rem', color: 'text.disabled', mr: 1, mt: '2px' }} /> You are the first
+          liquidity Output is estimated. If the price changes by more than 0.5% your transaction will revert.
+        </Typography>
+      )}
 
-        <RowBetween>
-          <Text color="textSubtle">Share of Pool</Text>
-          <Text bold>{noLiquidity ? '100' : poolTokenPercentage?.toSignificant(4)}%</Text>
-        </RowBetween>
-      </AutoColumn>
-      <Button className="mt-6" onClick={onAdd} fullWidth radii="card">
-        {noLiquidity ? 'Create Pool & Supply' : 'Confirm Supply'}
+      <Button
+        variant="contained"
+        color="primary"
+        onClick={onAdd}
+        fullWidth
+        size="large"
+        // scale={ButtonScales.LG}
+        // isLoading={isPending}
+        style={{ marginTop: 32 }}
+      >
+        {noLiquidity ? 'Create Pool & Supply' : 'Add Liquidity'}
       </Button>
-    </>
+    </div>
   )
 }
 

@@ -2,9 +2,7 @@ import { Credentials, StringTranslations } from '@crowdin/crowdin-api-client'
 import { useWeb3React } from '@web3-react/core'
 import { injected } from 'connectors'
 import React, { Suspense, useEffect, useState } from 'react'
-import { HashRouter, Route, Switch } from 'react-router-dom'
-import styled from 'styled-components'
-import { TwoPanelLayout } from 'uikit-dev/components/TwoPanelLayout'
+import { BrowserRouter, Route, Switch } from 'react-router-dom'
 import Menu from '../components/Menu'
 import Popups from '../components/Popups'
 import Web3ReactManager from '../components/Web3ReactManager'
@@ -13,6 +11,7 @@ import { LanguageContext } from '../hooks/LanguageContext'
 import { TranslationsContext } from '../hooks/TranslationsContext'
 import AddLiquidity from './AddLiquidity'
 import { RedirectDuplicateTokenIds, RedirectOldAddLiquidityPathStructure } from './AddLiquidity/redirects'
+import LiquidityList from './LiquidityList'
 import Pool from './Pool'
 import PoolFinder from './PoolFinder'
 import RemoveLiquidity from './RemoveLiquidity'
@@ -20,14 +19,6 @@ import { RedirectOldRemoveLiquidityPathStructure } from './RemoveLiquidity/redir
 import Swap from './Swap'
 import { RedirectPathToSwapOnly, RedirectToSwap } from './Swap/redirects'
 // import WaitingPage from 'uikit-dev/components/WaitingPage'
-
-const AppWrapper = styled.div`
-  display: flex;
-  flex-flow: column;
-  align-items: flex-start;
-  // overflow-x: hidden;
-  height: 100%;
-`
 
 export default function App() {
   const [selectedLanguage, setSelectedLanguage] = useState<any>(undefined)
@@ -93,43 +84,45 @@ export default function App() {
 
   return (
     <Suspense fallback={null}>
-      <HashRouter>
-        <AppWrapper>
-          <LanguageContext.Provider
-            value={{ selectedLanguage, setSelectedLanguage, translatedLanguage, setTranslatedLanguage }}
-          >
-            <TranslationsContext.Provider value={{ translations, setTranslations }}>
-              <Menu>
-                <TwoPanelLayout>
-                  <Popups />
-                  <Web3ReactManager>
-                    <Switch>
-                      <Route exact strict path="/swap" component={Swap} />
-                      <Route exact path="/swap/:currencyIdA/:currencyIdB" component={RedirectToSwap} />
-                      <Route exact path="/swap/:currencyIdA" component={RedirectToSwap} />
-                      <Route exact strict path="/find" component={PoolFinder} />
-                      <Route exact strict path="/liquidity" component={Pool} />
-                      <Route exact path="/add" component={AddLiquidity} />
-                      <Route exact strict path="/remove/:currencyIdA/:currencyIdB" component={RemoveLiquidity} />
+      <BrowserRouter>
+        <LanguageContext.Provider
+          value={{ selectedLanguage, setSelectedLanguage, translatedLanguage, setTranslatedLanguage }}
+        >
+          <TranslationsContext.Provider value={{ translations, setTranslations }}>
+            <Menu>
+              <Popups />
+              <Web3ReactManager>
+                <Switch>
+                  <Route exact strict path="/swap" component={Swap} />
+                  <Route exact path="/swap/:currencyIdA/:currencyIdB" component={RedirectToSwap} />
+                  <Route exact path="/swap/:currencyIdA" component={RedirectToSwap} />
+                  <Route exact strict path="/find" component={PoolFinder} />
+                  <Route exact strict path="/liquidity" component={Pool} />
+                  <Route exact path="/liquidity/add" component={AddLiquidity} />
+                  <Route exact path="/liquidity/list" component={LiquidityList} />
+                  <Route exact strict path="/liquidity/remove/:currencyIdA/:currencyIdB" component={RemoveLiquidity} />
 
-                      {/* <Route path="/xxx">
+                  {/* <Route path="/xxx">
                         <WaitingPage pageName="XXX" openDate="Tue Mar 30 2021 08:00:00 GMT+0700 (Indochina Time)" />
                       </Route> */}
 
-                      {/* Redirection: These old routes are still used in the code base */}
-                      <Route exact path="/add/:currencyIdA" component={RedirectOldAddLiquidityPathStructure} />
-                      <Route exact path="/add/:currencyIdA/:currencyIdB" component={RedirectDuplicateTokenIds} />
-                      <Route exact strict path="/remove/:tokens" component={RedirectOldRemoveLiquidityPathStructure} />
+                  {/* Redirection: These old routes are still used in the code base */}
+                  <Route exact path="/liquidity/add/:currencyIdA" component={RedirectOldAddLiquidityPathStructure} />
+                  <Route exact path="/liquidity/add/:currencyIdA/:currencyIdB" component={RedirectDuplicateTokenIds} />
+                  <Route
+                    exact
+                    strict
+                    path="/liquidity/remove/:tokens"
+                    component={RedirectOldRemoveLiquidityPathStructure}
+                  />
 
-                      <Route component={RedirectPathToSwapOnly} />
-                    </Switch>
-                  </Web3ReactManager>
-                </TwoPanelLayout>
-              </Menu>
-            </TranslationsContext.Provider>
-          </LanguageContext.Provider>
-        </AppWrapper>
-      </HashRouter>
+                  <Route component={RedirectPathToSwapOnly} />
+                </Switch>
+              </Web3ReactManager>
+            </Menu>
+          </TranslationsContext.Provider>
+        </LanguageContext.Provider>
+      </BrowserRouter>
     </Suspense>
   )
 }
