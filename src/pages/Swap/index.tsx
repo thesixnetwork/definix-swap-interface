@@ -20,7 +20,7 @@ import SyrupWarningModal from 'components/SyrupWarningModal'
 import TokenWarningModal from 'components/TokenWarningModal'
 import { INITIAL_ALLOWED_SLIPPAGE } from 'constants/index'
 import { CurrencyAmount, JSBI, Token, Trade } from 'definixswap-sdk'
-import { useActiveWeb3React } from 'hooks'
+import { useActiveWeb3React, useToast } from 'hooks'
 import { useAllTokens, useCurrency } from 'hooks/Tokens'
 import { ApprovalState, useApproveCallbackFromTrade } from 'hooks/useApproveCallback'
 import { useSwapCallback } from 'hooks/useSwapCallback'
@@ -98,6 +98,7 @@ export default function Swap({
   const { isXl } = useMatchBreakpoints()
   const isMobileOrTablet = !isXl
 
+  const { toastSuccess, toastError } = useToast()
   const allTransactions = useAllTransactions()
   const allTokens = useAllTokens()
 
@@ -252,32 +253,32 @@ export default function Swap({
 
   const { priceImpactWithoutFee } = computeTradePriceBreakdown(trade)
 
-  const handleSwap = useCallback(() => {
-    if (priceImpactWithoutFee && !confirmPriceImpactWithoutFee(priceImpactWithoutFee)) {
-      return
-    }
-    if (!swapCallback) {
-      return
-    }
-    setSwapState((prevState) => ({ ...prevState, attemptingTxn: true, swapErrorMessage: undefined, txHash: undefined }))
-    swapCallback()
-      .then((hash) => {
-        setSwapState((prevState) => ({
-          ...prevState,
-          attemptingTxn: false,
-          swapErrorMessage: undefined,
-          txHash: hash,
-        }))
-      })
-      .catch((error) => {
-        setSwapState((prevState) => ({
-          ...prevState,
-          attemptingTxn: false,
-          swapErrorMessage: error.message,
-          txHash: undefined,
-        }))
-      })
-  }, [priceImpactWithoutFee, swapCallback, setSwapState])
+  // const handleSwap = useCallback(() => {
+  //   if (priceImpactWithoutFee && !confirmPriceImpactWithoutFee(priceImpactWithoutFee)) {
+  //     return
+  //   }
+  //   if (!swapCallback) {
+  //     return
+  //   }
+  //   setSwapState((prevState) => ({ ...prevState, attemptingTxn: true, swapErrorMessage: undefined, txHash: undefined }))
+  //   swapCallback()
+  //     .then((hash) => {
+  //       setSwapState((prevState) => ({
+  //         ...prevState,
+  //         attemptingTxn: false,
+  //         swapErrorMessage: undefined,
+  //         txHash: hash,
+  //       }))
+  //     })
+  //     .catch((error) => {
+  //       setSwapState((prevState) => ({
+  //         ...prevState,
+  //         attemptingTxn: false,
+  //         swapErrorMessage: error.message,
+  //         txHash: undefined,
+  //       }))
+  //     })
+  // }, [priceImpactWithoutFee, swapCallback, setSwapState])
 
   // errors
   const [showInverted, setShowInverted] = useState<boolean>(false)
@@ -297,14 +298,19 @@ export default function Swap({
       (approvalSubmitted && approval === ApprovalState.APPROVED)) &&
     !(priceImpactSeverity > 3 && !isExpertMode)
 
+  const initSwapData = useCallback(() => {
+    onUserInput(Field.INPUT, '')
+    onUserInput(Field.OUTPUT, '')
+  }, [onUserInput])
+
   const handleConfirmDismiss = useCallback(() => {
     setSwapState((prevState) => ({ ...prevState, showConfirm: false }))
-
+    initSwapData()
     // if there was a tx hash, we want to clear the input
     if (txHash) {
       onUserInput(Field.INPUT, '')
     }
-  }, [onUserInput, txHash, setSwapState])
+  }, [onUserInput, txHash, initSwapData, setSwapState])
 
   const handleAcceptChanges = useCallback(() => {
     setSwapState((prevState) => ({ ...prevState, tradeToConfirm: trade }))
@@ -382,17 +388,7 @@ export default function Swap({
   )
 
   const [onPresentConfirmModal] = useModal(
-    <ConfirmSwapModal
-      trade={trade}
-      originalTrade={tradeToConfirm}
-      onAcceptChanges={handleAcceptChanges}
-      txHash={txHash}
-      recipient={recipient}
-      allowedSlippage={allowedSlippage}
-      onConfirm={handleSwap}
-      swapErrorMessage={swapErrorMessage}
-      onDismiss={handleConfirmDismiss}
-    />,
+    <ConfirmSwapModal recipient={recipient} onDismissModal={handleConfirmDismiss} />,
     false
   )
 
@@ -605,7 +601,7 @@ export default function Swap({
                             id="swap-button"
                             variant="contained"
                             size="large"
-                            disabled={!isValid || !!swapCallbackError || showApproveFlow || priceImpactSeverity > 3}
+                            // disabled={!isValid || !!swapCallbackError || showApproveFlow || priceImpactSeverity > 3}
                           >
                             Swap
                           </Button>

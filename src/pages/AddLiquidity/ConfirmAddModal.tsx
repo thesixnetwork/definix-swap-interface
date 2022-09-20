@@ -3,7 +3,7 @@ import { TransactionResponse } from '@ethersproject/providers'
 import { InjectedModalProps, useMatchBreakpoints } from '@fingerlabs/definixswap-uikit-v2'
 import { Divider } from '@mui/material'
 import { Currency, CurrencyAmount, ETHER, Percent, Price, TokenAmount } from 'definixswap-sdk'
-import { useActiveWeb3React } from 'hooks'
+import { useActiveWeb3React, useToast } from 'hooks'
 import React, { useEffect, useMemo, useState } from 'react'
 import { Field } from 'state/mint/actions'
 import { useTransactionAdder } from 'state/transactions/hooks'
@@ -56,7 +56,7 @@ export default function ConfirmAddModal({
   const [deadline] = useUserDeadline()
   const [allowedSlippage] = useUserSlippageTolerance()
   const addTransaction = useTransactionAdder()
-  //   const { toastSuccess, toastError } = useToast()
+  const { toastSuccess, toastError } = useToast()
   const { isXl, isXxl } = useMatchBreakpoints()
   const isMobile = useMemo(() => !isXl && !isXxl, [isXl, isXxl])
 
@@ -167,19 +167,19 @@ export default function ConfirmAddModal({
 
   useEffect(() => {
     if (txHash) {
-      //   toastSuccess('Add Liquidity Complete', <KlaytnScopeLink hash={txHash} />)
+      toastSuccess('Add Liquidity Complete', txHash)
       onFieldAInput('')
       onFieldBInput('')
       onDismiss()
     }
-  }, [txHash, onDismissModal, onDismiss, onFieldAInput, onFieldBInput])
+  }, [txHash, onDismissModal, onDismiss, toastSuccess, onFieldAInput, onFieldBInput])
 
   useEffect(() => {
     if (errorMsg) {
-      //   toastError('Add Liquidity Failed')
+      toastError('Add Liquidity Failed')
       onDismiss()
     }
-  }, [errorMsg, onDismissModal, onDismiss])
+  }, [errorMsg, onDismissModal, toastError, onDismiss])
 
   return (
     <ModalV2 title="Confirm Add Liquidity" onDismiss={onDismiss} sx={{ width: '100%', maxWidth: '520px' }}>

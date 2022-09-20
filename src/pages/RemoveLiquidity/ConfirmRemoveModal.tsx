@@ -11,13 +11,12 @@ import Coin from 'uikitV2/components/Coin'
 import { InjectedModalProps, NotiIcon, ModalBody, useMatchBreakpoints } from '@fingerlabs/definixswap-uikit-v2'
 import { Currency, Percent, TokenAmount, CurrencyAmount, Pair, Token, ETHER } from 'definixswap-sdk'
 
-// import { useToast } from 'state/toasts/hooks'
 import { useTransactionAdder } from 'state/transactions/hooks'
 import { Field } from 'state/burn/actions'
 import { ApprovalState, useApproveCallback } from 'hooks/useApproveCallback'
 
 import { calculateGasMargin, calculateSlippageAmount, getRouterContract } from 'utils'
-import { useActiveWeb3React } from 'hooks'
+import { useActiveWeb3React, useToast } from 'hooks'
 import { ROUTER_ADDRESS } from '../../constants'
 import { useUserDeadline, useUserSlippageTolerance } from '../../state/user/hooks'
 
@@ -62,7 +61,7 @@ export default function ConfirmRemoveModal({
     parsedAmounts[Field.LIQUIDITY],
     ROUTER_ADDRESS[chainId || parseInt(process.env.REACT_APP_CHAIN_ID || '0')]
   )
-  //   const { toastSuccess, toastError } = useToast()
+  const { toastSuccess, toastError } = useToast()
 
   const [attemptingTxn, setAttemptingTxn] = useState(false)
   const [txHash, setTxHash] = useState<string>('')
@@ -233,28 +232,20 @@ export default function ConfirmRemoveModal({
 
   useEffect(() => {
     if (txHash) {
-      //   toastSuccess(
-      //     t('{{Action}} Complete', {
-      //       Action: t('actionRemove Liquidty'),
-      //     }),
-      //     <KlaytnScopeLink hash={txHash} />
-      //   )
+      console.log('Remove Liquidty Complete')
+      toastSuccess('Remove Liquidty Complete', txHash)
       if (successTxCallback) successTxCallback()
       if (onDismiss) onDismiss()
     }
-  }, [txHash, onDismissModal, onDismiss, successTxCallback])
+  }, [txHash, onDismissModal, onDismiss, toastSuccess, successTxCallback])
 
   useEffect(() => {
     if (errorMsg) {
-      //   toastError(
-      //     t('{{Action}} Failed', {
-      //       Action: t('actionRemove Liquidty'),
-      //     })
-      //   )
-
+      console.log('Remove Liquidty Failed')
+      toastError('Remove Liquidty Failed')
       if (onDismiss) onDismiss()
     }
-  }, [errorMsg, onDismissModal, onDismiss])
+  }, [errorMsg, onDismissModal, toastError, onDismiss])
 
   useEffect(() => {
     return () => onUserInput(Field.LIQUIDITY_PERCENT, '0')
