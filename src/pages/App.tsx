@@ -18,6 +18,7 @@ import RemoveLiquidity from './RemoveLiquidity'
 import { RedirectOldRemoveLiquidityPathStructure } from './RemoveLiquidity/redirects'
 import Swap from './Swap'
 import { RedirectPathToSwapOnly, RedirectToSwap } from './Swap/redirects'
+import ToastListener from '../components/ToastListener'
 // import WaitingPage from 'uikit-dev/components/WaitingPage'
 
 export default function App() {
@@ -120,6 +121,8 @@ export default function App() {
                 </Switch>
               </Web3ReactManager>
             </Menu>
+
+            <ToastListener />
           </TranslationsContext.Provider>
         </LanguageContext.Provider>
       </BrowserRouter>

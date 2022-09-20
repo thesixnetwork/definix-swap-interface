@@ -1,11 +1,14 @@
 import { Web3Provider } from '@ethersproject/providers'
 import { useWeb3React as useWeb3ReactCore } from '@web3-react/core'
 // eslint-disable-next-line import/no-unresolved
-import { Web3ReactContextInterface } from '@web3-react/core/dist/types'
-import { useEffect, useState } from 'react'
+import { kebabCase } from 'lodash'
+import { useEffect, useMemo, useState } from 'react'
 import { isMobile } from 'react-device-detect'
+import { useDispatch } from 'react-redux'
+import { Toast, toastTypes } from 'uikit-dev'
 import { injected } from '../connectors'
 import { NetworkContextName } from '../constants'
+import { clear as clearToast, push as pushToast, remove as removeToast } from '../state/actions'
 
 export function useActiveWeb3React() {
   const context = useWeb3ReactCore<Web3Provider>()
@@ -83,4 +86,31 @@ export function useInactiveListener(suppress = false) {
     }
     return undefined
   }, [active, error, suppress, activate])
+}
+
+export const useToast = () => {
+  const dispatch = useDispatch()
+  const helpers = useMemo(() => {
+    const push = (toast: Toast) => dispatch(pushToast(toast))
+
+    return {
+      toastError: (title: string, description?: string) => {
+        return push({ id: kebabCase(title), type: toastTypes.DANGER, title, description })
+      },
+      toastInfo: (title: string, description?: string) => {
+        return push({ id: kebabCase(title), type: toastTypes.INFO, title, description })
+      },
+      toastSuccess: (title: string, description?: string) => {
+        return push({ id: kebabCase(title), type: toastTypes.SUCCESS, title, description })
+      },
+      toastWarning: (title: string, description?: string) => {
+        return push({ id: kebabCase(title), type: toastTypes.WARNING, title, description })
+      },
+      push,
+      remove: (id: string) => dispatch(removeToast(id)),
+      clear: () => dispatch(clearToast()),
+    }
+  }, [dispatch])
+
+  return helpers
 }
