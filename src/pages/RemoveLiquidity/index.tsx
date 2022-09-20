@@ -115,7 +115,10 @@ export default function RemoveLiquidity({
 
   // allowance handling
   const [signatureData, setSignatureData] = useState<{ v: number; r: string; s: string; deadline: number } | null>(null)
-  const [approval, approveCallback] = useApproveCallback(parsedAmounts[Field.LIQUIDITY], ROUTER_ADDRESS[chainId || parseInt(process.env.REACT_APP_CHAIN_ID || '0')])
+  const [approval, approveCallback] = useApproveCallback(
+    parsedAmounts[Field.LIQUIDITY],
+    ROUTER_ADDRESS[chainId || parseInt(process.env.REACT_APP_CHAIN_ID || '0')]
+  )
 
   const userPoolBalance = useTokenBalance(account ?? undefined, pair != null ? pair.liquidityToken : undefined)
 
@@ -429,8 +432,8 @@ export default function RemoveLiquidity({
   const oneCurrencyIsETH = currencyA === ETHER || currencyB === ETHER
   const oneCurrencyIsWETH = Boolean(
     chainId &&
-    ((currencyA && currencyEquals(WETH(chainId), currencyA)) ||
-      (currencyB && currencyEquals(WETH(chainId), currencyB)))
+      ((currencyA && currencyEquals(WETH(chainId), currencyA)) ||
+        (currencyB && currencyEquals(WETH(chainId), currencyB)))
   )
 
   // const handleSelectCurrencyA = useCallback(
@@ -780,6 +783,7 @@ export default function RemoveLiquidity({
                       <Button
                         style={{ ...textStyle.R_14B, width: isMobile ? '100%' : 186 }}
                         // onClick={onClickApproveButton}
+                        onClick={onAttemptToApprove}
                         // // scale={ButtonScales.LG}
                         // // xs={approval !== ApprovalState.NOT_APPROVED || signatureData !== null}
                         disabled={approval !== ApprovalState.NOT_APPROVED || signatureData !== null}

@@ -264,7 +264,7 @@ export default function ConfirmRemoveModal({
     <ModalV2 title="Confirm Remove Liquidity" onDismiss={onDismiss}>
       <ModalBody isBody>
         <Box width={isMobile ? '100%' : '472px'} height={isMobile ? '100vh' : '100%'}>
-          <Flex flexDirection="column" mb="20px" mt="16px">
+          <Flex flexDirection="column">
             <Text style={textStyle.R_16M} color="#666">
               LP amount before removal
             </Text>
@@ -307,7 +307,7 @@ export default function ConfirmRemoveModal({
               </Text>
             </Flex>
           </Flex>
-          <Divider style={{ marginBottom: 24, marginTop: 35 }} />
+          <Divider style={{ marginBottom: 24, marginTop: 12 }} />
           <Flex flexDirection="column">
             <Flex>
               <Text style={textStyle.R_16M} color="#666">
