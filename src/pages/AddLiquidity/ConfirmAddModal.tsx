@@ -5,6 +5,7 @@ import { Divider } from '@mui/material'
 import { Currency, CurrencyAmount, ETHER, Percent, Price, TokenAmount } from 'definixswap-sdk'
 import { useActiveWeb3React, useToast } from 'hooks'
 import React, { useEffect, useMemo, useState } from 'react'
+import { useAddPopup } from 'state/application/hooks'
 import { Field } from 'state/mint/actions'
 import { useTransactionAdder } from 'state/transactions/hooks'
 import { useUserDeadline, useUserSlippageTolerance } from 'state/user/hooks'
@@ -56,7 +57,8 @@ export default function ConfirmAddModal({
   const [deadline] = useUserDeadline()
   const [allowedSlippage] = useUserSlippageTolerance()
   const addTransaction = useTransactionAdder()
-  const { toastSuccess, toastError } = useToast()
+  const addPopup = useAddPopup()
+  // const { toastSuccess, toastError } = useToast()
   const { isXl, isXxl } = useMatchBreakpoints()
   const isMobile = useMemo(() => !isXl && !isXxl, [isXl, isXxl])
 
@@ -167,19 +169,20 @@ export default function ConfirmAddModal({
 
   useEffect(() => {
     if (txHash) {
-      toastSuccess('Add Liquidity Complete', txHash)
+      addPopup({ message: { message: 'Add Liquidity Complete', type: 'success' } })
       onFieldAInput('')
       onFieldBInput('')
       onDismiss()
     }
-  }, [txHash, onDismissModal, onDismiss, toastSuccess, onFieldAInput, onFieldBInput])
+  }, [txHash, onDismissModal, onDismiss, addPopup, onFieldAInput, onFieldBInput])
 
   useEffect(() => {
     if (errorMsg) {
-      toastError('Add Liquidity Failed')
+      addPopup({ message: { message: 'Add Liquidity Failed', type: 'error' } })
+
       onDismiss()
     }
-  }, [errorMsg, onDismissModal, toastError, onDismiss])
+  }, [errorMsg, onDismissModal, addPopup, onDismiss])
 
   return (
     <ModalV2 title="Confirm Add Liquidity" onDismiss={onDismiss} sx={{ width: '100%', maxWidth: '520px' }}>

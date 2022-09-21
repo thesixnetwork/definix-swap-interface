@@ -31,7 +31,7 @@ import PopupItem from './PopupItem'
 
 const FixedPopupColumn = styled(AutoColumn)`
   position: fixed;
-  top: 32px;
+  top: 86px;
   right: 16px;
   max-width: 100% !important;
   width: calc(100% - 32px);

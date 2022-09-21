@@ -6,6 +6,7 @@ import { Currency, ETHER, JSBI, TokenAmount } from 'definixswap-sdk'
 import { useActiveWeb3React, useToast } from 'hooks'
 import React, { useCallback, useEffect, useState } from 'react'
 import { useHistory } from 'react-router-dom'
+import { useAddPopup } from 'state/application/hooks'
 import { usePairAdder } from 'state/user/hooks'
 import { useTokenBalance } from 'state/wallet/hooks'
 import { ArrowBackIcon, Button, CardBody, Flex, Text, useMatchBreakpoints } from 'uikit-dev'
@@ -54,7 +55,7 @@ export default function PoolFinder() {
 
   const position: TokenAmount | undefined = useTokenBalance(account ?? undefined, pair?.liquidityToken)
   const hasPosition = Boolean(position && JSBI.greaterThan(position.raw, JSBI.BigInt(0)))
-  const { toastSuccess } = useToast()
+  const addPopup = useAddPopup()
 
   const handleCurrencySelect = useCallback(
     (currency: Currency) => {
@@ -98,10 +99,10 @@ export default function PoolFinder() {
   const onClickCreatePoolButton = useCallback(() => {
     if (pair) {
       addPair(pair)
-      toastSuccess('Import Complete')
+      addPopup({ message: { message: 'Import Complete', type: 'success' } })
       history.replace(`/liquidity/add`)
     }
-  }, [pair, toastSuccess, addPair, history])
+  }, [pair, addPopup, addPair, history])
 
   const onClickAddLiquidityButton = useCallback(
     (currencyId0, currencyId1) => {

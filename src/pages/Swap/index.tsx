@@ -29,6 +29,7 @@ import numeral from 'numeral'
 import React, { useCallback, useContext, useEffect, useMemo, useState } from 'react'
 import { ArrowDown } from 'react-feather'
 import { RouteComponentProps } from 'react-router-dom'
+import { useAddPopup } from 'state/application/hooks'
 import { Field } from 'state/swap/actions'
 import { useDefaultsFromURLSearch, useDerivedSwapInfo, useSwapActionHandlers, useSwapState } from 'state/swap/hooks'
 import { isTransactionRecent, useAllTransactions } from 'state/transactions/hooks'
@@ -98,7 +99,6 @@ export default function Swap({
   const { isXl } = useMatchBreakpoints()
   const isMobileOrTablet = !isXl
 
-  const { toastSuccess, toastError } = useToast()
   const allTransactions = useAllTransactions()
   const allTokens = useAllTokens()
 
@@ -400,6 +400,7 @@ export default function Swap({
 
   const onClickSwapButton = useCallback(() => {
     onPresentConfirmModal()
+    // addPopup({ message: { message: 'test', type: 'success' } }, '12345')
   }, [onPresentConfirmModal])
 
   const renderNoti = useCallback(() => {

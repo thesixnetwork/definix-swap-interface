@@ -1,4 +1,4 @@
-import React, { useCallback, useState, useEffect, useMemo } from 'react'
+import React, { useCallback, useState, useEffect, useMemo, Children } from 'react'
 import styled from 'styled-components'
 import { BigNumber } from '@ethersproject/bignumber'
 import { TransactionResponse } from '@ethersproject/providers'
@@ -16,7 +16,8 @@ import { Field } from 'state/burn/actions'
 import { ApprovalState, useApproveCallback } from 'hooks/useApproveCallback'
 
 import { calculateGasMargin, calculateSlippageAmount, getRouterContract } from 'utils'
-import { useActiveWeb3React, useToast } from 'hooks'
+import { useActiveWeb3React } from 'hooks'
+import { useAddPopup } from 'state/application/hooks'
 import { ROUTER_ADDRESS } from '../../constants'
 import { useUserDeadline, useUserSlippageTolerance } from '../../state/user/hooks'
 
@@ -61,7 +62,9 @@ export default function ConfirmRemoveModal({
     parsedAmounts[Field.LIQUIDITY],
     ROUTER_ADDRESS[chainId || parseInt(process.env.REACT_APP_CHAIN_ID || '0')]
   )
-  const { toastSuccess, toastError } = useToast()
+
+  const addPopup = useAddPopup()
+  // const { toastSuccess, toastError } = useToast()
 
   const [attemptingTxn, setAttemptingTxn] = useState(false)
   const [txHash, setTxHash] = useState<string>('')
@@ -232,20 +235,18 @@ export default function ConfirmRemoveModal({
 
   useEffect(() => {
     if (txHash) {
-      console.log('Remove Liquidty Complete')
-      toastSuccess('Remove Liquidty Complete', txHash)
+      addPopup({ message: { message: 'Remove Liquidty Complete', type: 'success' } })
       if (successTxCallback) successTxCallback()
       if (onDismiss) onDismiss()
     }
-  }, [txHash, onDismissModal, onDismiss, toastSuccess, successTxCallback])
+  }, [txHash, onDismissModal, onDismiss, addPopup, successTxCallback])
 
   useEffect(() => {
     if (errorMsg) {
-      console.log('Remove Liquidty Failed')
-      toastError('Remove Liquidty Failed')
+      addPopup({ message: { message: 'Remove Liquidty Failed', type: 'error', children: errorMsg } })
       if (onDismiss) onDismiss()
     }
-  }, [errorMsg, onDismissModal, toastError, onDismiss])
+  }, [errorMsg, onDismissModal, addPopup, onDismiss])
 
   useEffect(() => {
     return () => onUserInput(Field.LIQUIDITY_PERCENT, '0')

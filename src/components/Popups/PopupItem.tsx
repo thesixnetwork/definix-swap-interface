@@ -7,27 +7,30 @@ import { PopupContent } from '../../state/application/actions'
 import { useRemovePopup } from '../../state/application/hooks'
 import ListUpdatePopup from './ListUpdatePopup'
 import TransactionPopup from './TransactionPopup'
+import MessagePopup from './MessagePopup'
 
 export const StyledClose = styled(X)`
   position: absolute;
-  right: 10px;
-  top: 10px;
+  border-radius: 0 8 0;
+  right: 8px;
+  top: 6px;
+  width: 16px;
 
   :hover {
     cursor: pointer;
   }
 `
 export const Popup = styled.div`
-  display: inline-block;
-  width: 100%;
-  padding: 1em;
-  background-color: ${({ theme }) => theme.colors.invertedContrast};
   position: relative;
-  border-radius: ${({ theme }) => theme.radii.default};
-  padding: 20px;
+  background-color: #ffffff;
+  border: 1px solid #ffedcb;
+  border-radius: 16px;
+  box-shadow: 0 8px 8px 0 rgb(254 169 72 / 30%);
+  padding: 1rem;
   padding-right: 35px;
+  display: flex;
+  align-items: center;
   overflow: hidden;
-  box-shadow: ${({ theme }) => theme.shadows.elevation1};
 
   ${({ theme }) => theme.mediaQueries.sm} {
     min-width: 290px;
@@ -80,6 +83,9 @@ export default function PopupItem({
       listUpdate: { listUrl, oldList, newList, auto },
     } = content
     popupContent = <ListUpdatePopup popKey={popKey} listUrl={listUrl} oldList={oldList} newList={newList} auto={auto} />
+  } else if ('message' in content) {
+    const { message } = content
+    popupContent = <MessagePopup {...message} />
   }
 
   const faderStyle = useSpring({

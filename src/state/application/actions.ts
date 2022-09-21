@@ -1,5 +1,6 @@
 import { createAction } from '@reduxjs/toolkit'
 import { TokenList } from '@uniswap/token-lists'
+import { ReactNode } from 'react'
 
 export type PopupContent =
   | {
@@ -15,6 +16,14 @@ export type PopupContent =
         oldList: TokenList
         newList: TokenList
         auto: boolean
+      }
+    }
+  | {
+      message: {
+        message: string
+        type: string
+        children?: ReactNode
+        onClick?: () => void
       }
     }
 
