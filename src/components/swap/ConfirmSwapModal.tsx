@@ -8,9 +8,9 @@ import { useUserDeadline, useUserSlippageTolerance } from 'state/user/hooks'
 import { ALLOWED_PRICE_IMPACT_HIGH, BLOCKED_PRICE_IMPACT_NON_EXPERT } from 'constants/index'
 import { computeTradePriceBreakdown } from 'utils/prices'
 import ModalV2 from 'uikitV2/components/ModalV2'
-import { useToast } from 'hooks'
+// import { useToast } from 'hooks'
 import { ModalBody } from '@fingerlabs/definixswap-uikit-v2'
-import { useAddPopup } from 'state/application/hooks'
+// import { useAddPopup } from 'state/application/hooks'
 import SwapModalFooter from './SwapModalFooter'
 import SwapModalHeader from './SwapModalHeader'
 
@@ -69,7 +69,7 @@ export default function ConfirmSwapModal({
   const [errorMessage, setErrorMessage] = useState(undefined)
   const [deadline] = useUserDeadline()
   const [allowedSlippage] = useUserSlippageTolerance()
-  const addPopup = useAddPopup()
+  // const addPopup = useAddPopup()
   // const { toastSuccess, toastError } = useToast()
   const { callback: swapCallback } = useSwapCallback(trade, allowedSlippage, deadline, recipient)
 
@@ -101,17 +101,17 @@ export default function ConfirmSwapModal({
     swapCallback()
       .then((hash) => {
         setTxHash(hash)
-        addPopup({ message: { message: 'Swap Complete', type: 'success' } })
+        // addPopup({ message: { message: 'Swap Complete', type: 'success' } })
         onDismiss()
         onDismissModal()
       })
       .catch((error) => {
         setErrorMessage(error.message)
-        addPopup({ message: { message: 'Swap Failed', type: 'error' } })
+        // addPopup({ message: { message: 'Swap Failed', type: 'error' } })
         onDismiss()
         onDismissModal()
       })
-  }, [priceImpactWithoutFee, swapCallback, addPopup, onDismiss, onDismissModal])
+  }, [priceImpactWithoutFee, swapCallback, onDismiss, onDismissModal])
 
   return (
     <ModalV2 title="Confirm Swap" onDismiss={onDismiss} sx={{ width: '100%', maxWidth: '520px' }}>

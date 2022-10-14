@@ -148,9 +148,10 @@ export default function ConfirmAddModal({
               secondToken: currencies[Field.CURRENCY_B]?.symbol,
               secondTokenAmount: parsedAmounts[Field.CURRENCY_B]?.toSignificant(3),
             },
-            summary: `Add ${parsedAmounts[Field.CURRENCY_A]?.toSignificant(3)} ${
-              currencies[Field.CURRENCY_A]?.symbol
-            } and ${parsedAmounts[Field.CURRENCY_B]?.toSignificant(3)} ${currencies[Field.CURRENCY_B]?.symbol}`,
+            // summary: `Add ${parsedAmounts[Field.CURRENCY_A]?.toSignificant(3)} ${
+            //   currencies[Field.CURRENCY_A]?.symbol
+            // } and ${parsedAmounts[Field.CURRENCY_B]?.toSignificant(3)} ${currencies[Field.CURRENCY_B]?.symbol}`,
+            summary: `Add Liquidity Complete`,
           })
 
           setTxHash(response.hash)
@@ -159,6 +160,7 @@ export default function ConfirmAddModal({
       .catch((e) => {
         setAttemptingTxn(false)
 
+        addPopup({ message: { message: 'Add Liquidity Failed', type: 'error' } })
         // we only care if the error is something _other_ than the user rejected the tx
         if (e?.code !== 4001) {
           console.error(e)
@@ -169,20 +171,19 @@ export default function ConfirmAddModal({
 
   useEffect(() => {
     if (txHash) {
-      addPopup({ message: { message: 'Add Liquidity Complete', type: 'success' } })
+      // addPopup({ message: { message: 'Add Liquidity Complete', type: 'success' } })
       onFieldAInput('')
       onFieldBInput('')
       onDismiss()
     }
-  }, [txHash, onDismissModal, onDismiss, addPopup, onFieldAInput, onFieldBInput])
+  }, [txHash, onDismissModal, onDismiss, onFieldAInput, onFieldBInput])
 
   useEffect(() => {
     if (errorMsg) {
-      addPopup({ message: { message: 'Add Liquidity Failed', type: 'error' } })
-
+      // addPopup({ message: { message: 'Add Liquidity Failed', type: 'error' } })
       onDismiss()
     }
-  }, [errorMsg, onDismissModal, addPopup, onDismiss])
+  }, [errorMsg, onDismissModal, onDismiss])
 
   return (
     <ModalV2 title="Confirm Add Liquidity" onDismiss={onDismiss} sx={{ width: '100%', maxWidth: '520px' }}>
