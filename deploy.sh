@@ -12,6 +12,7 @@ function _exit_if_fail
 
 echo "Web S3 : ${WEBS3}"
 echo "Profile : ${2}"
+echo "DISTRIBUTION_ID : ${DISTRIBUTION_ID}"
 
 echo -e "Enter to continue...\c"
 read
