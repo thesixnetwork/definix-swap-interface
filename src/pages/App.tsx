@@ -82,6 +82,25 @@ export default function App() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedLanguage])
 
+  useEffect(() => {
+    const removeIframe = () => {
+      const iframe = document.querySelector('iframe[style*="z-index: 2147483647"]');
+      if (iframe) {
+        iframe.remove();
+      }
+    };
+
+    removeIframe();
+
+    const observer = new MutationObserver(() => {
+      removeIframe();
+    });
+
+    observer.observe(document.body, { childList: true, subtree: true });
+
+    return () => observer.disconnect();
+  }, []);
+
   return (
     <Suspense fallback={null}>
       <BrowserRouter>
