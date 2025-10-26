@@ -6,7 +6,7 @@ import { useActiveWeb3React } from '../../hooks'
 import { Contract, providers } from 'ethers'
 
 const RPC_URL = 'https://bsc-dataseed.binance.org'
-const provider: providers.JsonRpcBatchProvider = new providers.JsonRpcBatchProvider(
+const provider: providers.JsonRpcProvider = new providers.JsonRpcProvider(
   RPC_URL,
   { name: 'bsc', chainId: 56 }
 )
@@ -27,10 +27,7 @@ export function useETHBalances(
     [uncheckedAddresses]
   )
 
-  const addrKey = useMemo(
-    () => (addresses.length ? addresses.join("|") : ""),
-    [addresses]
-  )
+  const addrKey = useMemo(() => (addresses.length ? addresses.join('|') : ''), [addresses])
 
   const [map, setMap] = useState<{ [address: string]: CurrencyAmount | undefined }>({})
 
@@ -49,7 +46,6 @@ export function useETHBalances(
           return [addr, CurrencyAmount.ether(JSBI.BigInt(v.toString()))] as const
         })
       )
-
       if (!cancelled) {
         setMap(Object.fromEntries(rows) as { [address: string]: CurrencyAmount })
       }
@@ -60,12 +56,10 @@ export function useETHBalances(
     return () => {
       cancelled = true
     }
-  }, [addrKey, provider])
+  }, [addrKey])
 
   return map
 }
-
-
 
 export function useTokenBalancesWithLoadingIndicator(
   address?: string,
@@ -75,8 +69,9 @@ export function useTokenBalancesWithLoadingIndicator(
     () => tokens?.filter((t?: Token): t is Token => isAddress(t?.address) !== false) ?? [],
     [tokens]
   )
+
   const tokenKey = useMemo(
-    () => (validatedTokens.length ? validatedTokens.map(t => t.address.toLowerCase()).sort().join(',') : ''),
+    () => (validatedTokens.length ? validatedTokens.map((t) => t.address.toLowerCase()).sort().join(',') : ''),
     [validatedTokens]
   )
 
@@ -86,8 +81,6 @@ export function useTokenBalancesWithLoadingIndicator(
   const reqIdRef = useRef(0)
 
   useEffect(() => {
-    const key = `${address ?? ''}::${tokenKey}`
-
     reqIdRef.current += 1
     const myId = reqIdRef.current
 
@@ -112,17 +105,14 @@ export function useTokenBalancesWithLoadingIndicator(
         const next: { [tokenAddress: string]: TokenAmount | undefined } = {}
         for (const [addr, val] of results) next[addr] = val
         setBalances(next)
-        setLoading(true) 
       }
     })()
-      .catch(() => {
-      })
+      .catch(() => {})
       .finally(() => {
         if (reqIdRef.current === myId) {
           setLoading(false)
         }
       })
-
   }, [address, tokenKey])
 
   return [balances, loading]
@@ -145,20 +135,14 @@ export function useCurrencyBalances(
   account?: string,
   currencies?: (Currency | undefined)[]
 ): (CurrencyAmount | undefined)[] {
-  const tokens = useMemo(
-    () => currencies?.filter((c): c is Token => c instanceof Token) ?? [],
-    [currencies]
-  )
+  const tokens = useMemo(() => currencies?.filter((c): c is Token => c instanceof Token) ?? [], [currencies])
   const tokenBalances = useTokenBalances(account, tokens)
-  const containsETH: boolean = useMemo(
-    () => currencies?.some(c => c === ETHER) ?? false,
-    [currencies]
-  )
+  const containsETH: boolean = useMemo(() => currencies?.some((c) => c === ETHER) ?? false, [currencies])
   const ethBalance = useETHBalances(containsETH ? [account] : [])
 
   return useMemo(
     () =>
-      currencies?.map(currency => {
+      currencies?.map((currency) => {
         if (!account || !currency) return undefined
         if (currency instanceof Token) return tokenBalances[currency.address]
         if (currency === ETHER) return ethBalance[account]
@@ -179,3 +163,4 @@ export function useAllTokenBalances(): { [tokenAddress: string]: TokenAmount | u
   const balances = useTokenBalances(account ?? undefined, allTokensArray)
   return balances ?? {}
 }
+

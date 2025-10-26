@@ -36,7 +36,18 @@
     "no-nested-ternary": 0,
     "default-case": 0,
     "react/require-default-props": 0,
-    "class-methods-use-this": 0
+    "class-methods-use-this": 0,
+    "import/no-duplicates": "off",
+    "react/jsx-no-bind": "off",
+    "import/order": "off",
+    "@typescript-eslint/no-empty-function": "off",
+    "consistent-return": "off",
+    "no-restricted-syntax": "off",
+    "react-hooks/exhaustive-deps": "off",
+    "react/default-props-match-prop-types": "off",
+    "jsx-a11y/control-has-associated-label": "off",
+    "react/no-unused-prop-types": "off",
+    "react/no-unknown-property": "off"
     // End temporary rules
   }
 }

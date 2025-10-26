@@ -95,8 +95,7 @@
     "start-server-and-test": "^1.11.0"
   },
   "resolutions": {
-    "@walletconnect/web3-provider": "1.1.1-alpha.0",
-    "babel-loader": "8.1.0"
+    "@walletconnect/web3-provider": "1.1.1-alpha.0"
   },
   "scripts": {
     "start": "NODE_ENV=development CI=false dotenv -e .env.development react-scripts start",
@@ -122,8 +121,5 @@
       "last 1 safari version"
     ]
   },
-  "license": "GPL-3.0-or-later",
-  "overrides": {
-    "babel-loader": "8.1.0"
-  }
+  "license": "GPL-3.0-or-later"
 }

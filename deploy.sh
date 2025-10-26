@@ -17,7 +17,7 @@ echo "DISTRIBUTION_ID : ${DISTRIBUTION_ID}"
 echo -e "Enter to continue...\c"
 read
 
-yarn --ignore-engines
+yarn install --frozen-lockfile --ignore-engines
 _exit_if_fail $?
 
 yarn build:${DEPLOY_ENV}
