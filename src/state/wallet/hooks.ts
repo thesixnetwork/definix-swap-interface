@@ -1,20 +1,21 @@
 import { Currency, CurrencyAmount, ETHER, JSBI, Token, TokenAmount } from 'definixswap-sdk'
-import { useMemo } from 'react'
-import ERC20_INTERFACE from '../../constants/abis/erc20'
+import { useEffect, useMemo, useRef, useState } from 'react'
+import { isAddress } from '../../utils'
 import { useAllTokens } from '../../hooks/Tokens'
 import { useActiveWeb3React } from '../../hooks'
-import { useMulticallContract } from '../../hooks/useContract'
-import { isAddress } from '../../utils'
-import { useSingleContractMultipleData, useMultipleContractSingleData } from '../multicall/hooks'
+import { Contract, providers } from 'ethers'
 
-/**
- * Returns a map of the given addresses to their eventually consistent ETH balances.
- */
+const RPC_URL = 'https://bsc-dataseed.binance.org'
+const provider: providers.JsonRpcBatchProvider = new providers.JsonRpcBatchProvider(
+  RPC_URL,
+  { name: 'bsc', chainId: 56 }
+)
+
+const ERC20_ABI = ['function balanceOf(address) view returns (uint256)']
+
 export function useETHBalances(
   uncheckedAddresses?: (string | undefined)[]
 ): { [address: string]: CurrencyAmount | undefined } {
-  const multicallContract = useMulticallContract()
-
   const addresses: string[] = useMemo(
     () =>
       uncheckedAddresses
@@ -26,26 +27,46 @@ export function useETHBalances(
     [uncheckedAddresses]
   )
 
-  const results = useSingleContractMultipleData(
-    multicallContract,
-    'getEthBalance',
-    addresses.map(address => [address])
+  const addrKey = useMemo(
+    () => (addresses.length ? addresses.join("|") : ""),
+    [addresses]
   )
 
-  return useMemo(
-    () =>
-      addresses.reduce<{ [address: string]: CurrencyAmount }>((memo, address, i) => {
-        const value = results?.[i]?.result?.[0]
-        if (value) memo[address] = CurrencyAmount.ether(JSBI.BigInt(value.toString()))
-        return memo
-      }, {}),
-    [addresses, results]
-  )
+  const [map, setMap] = useState<{ [address: string]: CurrencyAmount | undefined }>({})
+
+  useMemo(() => {
+    if (!addresses.length) {
+      setMap({})
+      return
+    }
+
+    let cancelled = false
+
+    const fetchBalances = async () => {
+      const rows = await Promise.all(
+        addresses.map(async (addr) => {
+          const v = await provider.getBalance(addr)
+          return [addr, CurrencyAmount.ether(JSBI.BigInt(v.toString()))] as const
+        })
+      )
+
+      if (!cancelled) {
+        setMap(Object.fromEntries(rows) as { [address: string]: CurrencyAmount })
+      }
+    }
+
+    fetchBalances().catch(() => {})
+
+    return () => {
+      cancelled = true
+    }
+  }, [addrKey, provider])
+
+  return map
 }
 
-/**
- * Returns a map of token addresses to their eventually consistent token balances for a single account.
- */
+
+
 export function useTokenBalancesWithLoadingIndicator(
   address?: string,
   tokens?: (Token | undefined)[]
@@ -54,30 +75,57 @@ export function useTokenBalancesWithLoadingIndicator(
     () => tokens?.filter((t?: Token): t is Token => isAddress(t?.address) !== false) ?? [],
     [tokens]
   )
+  const tokenKey = useMemo(
+    () => (validatedTokens.length ? validatedTokens.map(t => t.address.toLowerCase()).sort().join(',') : ''),
+    [validatedTokens]
+  )
 
-  const validatedTokenAddresses = useMemo(() => validatedTokens.map(vt => vt.address), [validatedTokens])
+  const [balances, setBalances] = useState<{ [tokenAddress: string]: TokenAmount | undefined }>({})
+  const [loading, setLoading] = useState<boolean>(false)
 
-  const balances = useMultipleContractSingleData(validatedTokenAddresses, ERC20_INTERFACE, 'balanceOf', [address])
+  const reqIdRef = useRef(0)
 
-  const anyLoading: boolean = useMemo(() => balances.some(callState => callState.loading), [balances])
+  useEffect(() => {
+    const key = `${address ?? ''}::${tokenKey}`
 
-  return [
-    useMemo(
-      () =>
-        address && validatedTokens.length > 0
-          ? validatedTokens.reduce<{ [tokenAddress: string]: TokenAmount | undefined }>((memo, token, i) => {
-              const value = balances?.[i]?.result?.[0]
-              const amount = value ? JSBI.BigInt(value.toString()) : undefined
-              if (amount) {
-                memo[token.address] = new TokenAmount(token, amount)
-              }
-              return memo
-            }, {})
-          : {},
-      [address, validatedTokens, balances]
-    ),
-    anyLoading
-  ]
+    reqIdRef.current += 1
+    const myId = reqIdRef.current
+
+    if (!address || validatedTokens.length === 0) {
+      setBalances({})
+      setLoading(false)
+      return
+    }
+
+    setLoading(true)
+
+    ;(async () => {
+      const results = await Promise.all(
+        validatedTokens.map(async (t) => {
+          const c = new Contract(t.address, ERC20_ABI, provider)
+          const v = await c.balanceOf(address)
+          return [t.address, new TokenAmount(t, JSBI.BigInt(v.toString()))] as const
+        })
+      )
+
+      if (reqIdRef.current === myId) {
+        const next: { [tokenAddress: string]: TokenAmount | undefined } = {}
+        for (const [addr, val] of results) next[addr] = val
+        setBalances(next)
+        setLoading(true) 
+      }
+    })()
+      .catch(() => {
+      })
+      .finally(() => {
+        if (reqIdRef.current === myId) {
+          setLoading(false)
+        }
+      })
+
+  }, [address, tokenKey])
+
+  return [balances, loading]
 }
 
 export function useTokenBalances(
@@ -87,7 +135,6 @@ export function useTokenBalances(
   return useTokenBalancesWithLoadingIndicator(address, tokens)[0]
 }
 
-// get the balance for a single token/account combo
 export function useTokenBalance(account?: string, token?: Token): TokenAmount | undefined {
   const tokenBalances = useTokenBalances(account, [token])
   if (!token) return undefined
@@ -98,12 +145,15 @@ export function useCurrencyBalances(
   account?: string,
   currencies?: (Currency | undefined)[]
 ): (CurrencyAmount | undefined)[] {
-  const tokens = useMemo(() => currencies?.filter((currency): currency is Token => currency instanceof Token) ?? [], [
-    currencies
-  ])
-
+  const tokens = useMemo(
+    () => currencies?.filter((c): c is Token => c instanceof Token) ?? [],
+    [currencies]
+  )
   const tokenBalances = useTokenBalances(account, tokens)
-  const containsETH: boolean = useMemo(() => currencies?.some(currency => currency === ETHER) ?? false, [currencies])
+  const containsETH: boolean = useMemo(
+    () => currencies?.some(c => c === ETHER) ?? false,
+    [currencies]
+  )
   const ethBalance = useETHBalances(containsETH ? [account] : [])
 
   return useMemo(
@@ -122,7 +172,6 @@ export function useCurrencyBalance(account?: string, currency?: Currency): Curre
   return useCurrencyBalances(account, [currency])[0]
 }
 
-// mimics useAllBalances
 export function useAllTokenBalances(): { [tokenAddress: string]: TokenAmount | undefined } {
   const { account } = useActiveWeb3React()
   const allTokens = useAllTokens()
