@@ -220,6 +220,19 @@ export default function Swap({
       : parsedAmounts[dependentField]?.toSignificant(6) ?? '',
   }
 
+  console.log('[swap debug] swap state', {
+    independentField,
+    dependentField,
+    typedValue,
+    inputCurrency: currencies[Field.INPUT]?.symbol,
+    outputCurrency: currencies[Field.OUTPUT]?.symbol,
+    parsedInput: parsedAmounts[Field.INPUT]?.toExact(),
+    parsedOutput: parsedAmounts[Field.OUTPUT]?.toExact(),
+    tradeExists: !!trade,
+    tradeRoute: trade?.route?.path?.map((t) => t.symbol),
+    formattedOutput: formattedAmounts[Field.OUTPUT],
+  })
+
   const route = trade?.route
   const userHasSpecifiedInputOutput = Boolean(
     currencies[Field.INPUT] && currencies[Field.OUTPUT] && parsedAmounts[independentField]?.greaterThan(JSBI.BigInt(0))

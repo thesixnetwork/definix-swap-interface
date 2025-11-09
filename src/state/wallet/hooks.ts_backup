@@ -1,0 +1,263 @@
+import { Currency, CurrencyAmount, ETHER, JSBI, Token, TokenAmount } from 'definixswap-sdk'
+import { useEffect, useMemo, useRef, useState } from 'react'
+import { isAddress } from '../../utils'
+import { useAllTokens } from '../../hooks/Tokens'
+import { useActiveWeb3React } from '../../hooks'
+import { Contract, providers } from 'ethers'
+
+const RPC_URL = 'https://bsc-dataseed.binance.org'
+const provider: providers.JsonRpcProvider = new providers.JsonRpcProvider(RPC_URL, {
+  name: 'bsc',
+  chainId: 56,
+})
+
+const ERC20_ABI = ['function balanceOf(address) view returns (uint256)']
+
+export function useETHBalances(
+  uncheckedAddresses?: (string | undefined)[]
+): { [address: string]: CurrencyAmount | undefined } {
+  const addresses: string[] = useMemo(
+    () =>
+      uncheckedAddresses
+        ? uncheckedAddresses
+            .map(isAddress)
+            .filter((a): a is string => a !== false)
+            .sort()
+        : [],
+    [uncheckedAddresses]
+  )
+
+  const addrKey = useMemo(() => (addresses.length ? addresses.join('|') : ''), [addresses])
+
+  const [map, setMap] = useState<{ [address: string]: CurrencyAmount | undefined }>({})
+
+  console.log('useETHBalances render', { addrKey, addressesCount: addresses.length })
+
+  useEffect(() => {
+    console.log('useETHBalances effect start', { addrKey, addressesCount: addresses.length })
+
+    if (!addresses.length) {
+      setMap({})
+      console.log('useETHBalances: no addresses, clear map')
+      return
+    }
+
+    let cancelled = false
+
+    const fetchBalances = async () => {
+      try {
+        console.log('useETHBalances: fetching balances', {
+          addressesCount: addresses.length,
+        })
+
+        const rows = await Promise.all(
+          addresses.map(async (addr) => {
+            const v = await provider.getBalance(addr)
+            return [addr, CurrencyAmount.ether(JSBI.BigInt(v.toString()))] as const
+          })
+        )
+
+        if (!cancelled) {
+          const nextMap = Object.fromEntries(rows) as { [address: string]: CurrencyAmount }
+          setMap(nextMap)
+          console.log('useETHBalances: setMap done', {
+            addrKey,
+            entries: Object.keys(nextMap).length,
+          })
+        } else {
+          console.log('useETHBalances: cancelled before setMap', { addrKey })
+        }
+      } catch (e) {
+        if (!cancelled) {
+          console.log('useETHBalances: fetch error', e)
+        }
+      }
+    }
+
+    fetchBalances()
+
+    return () => {
+      cancelled = true
+      console.log('useETHBalances cleanup', { addrKey })
+    }
+  }, [addrKey])
+
+  return map
+}
+
+export function useTokenBalancesWithLoadingIndicator(
+  address?: string,
+  tokens?: (Token | undefined)[]
+): [{ [tokenAddress: string]: TokenAmount | undefined }, boolean] {
+  const validatedTokens: Token[] = useMemo(
+    () => tokens?.filter((t?: Token): t is Token => isAddress(t?.address) !== false) ?? [],
+    [tokens]
+  )
+
+  const tokenKey = useMemo(
+    () =>
+      validatedTokens.length
+        ? validatedTokens
+            .map((t) => t.address.toLowerCase())
+            .sort()
+            .join(',')
+        : '',
+    [validatedTokens]
+  )
+
+  const [balances, setBalances] = useState<{ [tokenAddress: string]: TokenAmount | undefined }>({})
+  const [loading, setLoading] = useState<boolean>(false)
+
+  const reqIdRef = useRef(0)
+
+  console.log('useTokenBalancesWithLoadingIndicator render', {
+    address,
+    tokenKeyLength: tokenKey.length,
+    tokensCount: validatedTokens.length,
+    loading,
+  })
+
+  useEffect(() => {
+    reqIdRef.current += 1
+    const myId = reqIdRef.current
+
+    console.log('useTokenBalancesWithLoadingIndicator effect start', {
+      address,
+      tokenKeyLength: tokenKey.length,
+      tokensCount: validatedTokens.length,
+      reqId: myId,
+    })
+
+    if (!address) {
+      if (Object.keys(balances).length || loading) {
+        setBalances({})
+        setLoading(false)
+      } else {
+        setLoading(false)
+      }
+      console.log(
+        'useTokenBalancesWithLoadingIndicator: no address, clear balances & stop',
+        { address, reqId: myId }
+      )
+      return
+    }
+
+    if (validatedTokens.length === 0) {
+      console.log(
+        'useTokenBalancesWithLoadingIndicator: address ok but no tokens, do nothing',
+        { address, reqId: myId }
+      )
+      return
+    }
+
+    setLoading(true)
+
+    ;(async () => {
+      try {
+        console.log('useTokenBalancesWithLoadingIndicator: fetching balances', {
+          address,
+          tokensCount: validatedTokens.length,
+          reqId: myId,
+        })
+
+        const results = await Promise.all(
+          validatedTokens.map(async (t) => {
+            const c = new Contract(t.address, ERC20_ABI, provider)
+            const v = await c.balanceOf(address)
+            return [t.address, new TokenAmount(t, JSBI.BigInt(v.toString()))] as const
+          })
+        )
+
+        if (reqIdRef.current === myId) {
+          const next: { [tokenAddress: string]: TokenAmount | undefined } = {}
+          for (const [addr, val] of results) next[addr] = val
+          setBalances(next)
+          console.log('useTokenBalancesWithLoadingIndicator: setBalances done', {
+            address,
+            tokensCount: validatedTokens.length,
+            reqId: myId,
+            entries: Object.keys(next).length,
+          })
+        } else {
+          console.log('useTokenBalancesWithLoadingIndicator: stale response dropped', {
+            address,
+            reqId: myId,
+            currentReqId: reqIdRef.current,
+          })
+        }
+      } catch (e) {
+        console.log('useTokenBalancesWithLoadingIndicator: fetch error', {
+          address,
+          reqId: myId,
+          error: e,
+        })
+      } finally {
+        if (reqIdRef.current === myId) {
+          setLoading(false)
+          console.log('useTokenBalancesWithLoadingIndicator: loading false', {
+            address,
+            reqId: myId,
+          })
+        } else {
+          console.log(
+            'useTokenBalancesWithLoadingIndicator: skip loading false for stale req',
+            {
+              address,
+              reqId: myId,
+              currentReqId: reqIdRef.current,
+            }
+          )
+        }
+      }
+    })()
+  }, [address, tokenKey])
+
+  return [balances, loading]
+}
+
+export function useTokenBalances(
+  address?: string,
+  tokens?: (Token | undefined)[]
+): { [tokenAddress: string]: TokenAmount | undefined } {
+  return useTokenBalancesWithLoadingIndicator(address, tokens)[0]
+}
+
+export function useTokenBalance(account?: string, token?: Token): TokenAmount | undefined {
+  const tokenBalances = useTokenBalances(account, [token])
+  if (!token) return undefined
+  return tokenBalances[token.address]
+}
+
+export function useCurrencyBalances(
+  account?: string,
+  currencies?: (Currency | undefined)[]
+): (CurrencyAmount | undefined)[] {
+  const tokens = useMemo(() => currencies?.filter((c): c is Token => c instanceof Token) ?? [], [currencies])
+  const tokenBalances = useTokenBalances(account, tokens)
+  const containsETH: boolean = useMemo(() => currencies?.some((c) => c === ETHER) ?? false, [currencies])
+  const ethBalance = useETHBalances(containsETH ? [account] : [])
+
+  return useMemo(
+    () =>
+      currencies?.map((currency) => {
+        if (!account || !currency) return undefined
+        if (currency instanceof Token) return tokenBalances[currency.address]
+        if (currency === ETHER) return ethBalance[account]
+        return undefined
+      }) ?? [],
+    [account, currencies, ethBalance, tokenBalances]
+  )
+}
+
+export function useCurrencyBalance(account?: string, currency?: Currency): CurrencyAmount | undefined {
+  return useCurrencyBalances(account, [currency])[0]
+}
+
+export function useAllTokenBalances(): { [tokenAddress: string]: TokenAmount | undefined } {
+  const { account } = useActiveWeb3React()
+  const allTokens = useAllTokens()
+  const allTokensArray = useMemo(() => Object.values(allTokens ?? {}), [allTokens])
+  const balances = useTokenBalances(account ?? undefined, allTokensArray)
+  return balances ?? {}
+}
+
